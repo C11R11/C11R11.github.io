@@ -1,6 +1,8 @@
+<a href="https://github.dev/C11R11/C11R11.github.io" class="button">Edit code</button>
+
 # Linux
 
-# Linux Command Reference
+## Linux Command Reference
 
 | Category | Command | Description |
 | :--- | :--- | :--- |
@@ -16,3 +18,20 @@
 | **File Permissions** | `chown user:group <file>` | Change owner and group of a file |
 | **Logs** | `journalctl -xe` | View system logs for troubleshooting |
 | **Logs** | `tail -f /var/log/syslog` | Watch logs in real-time |
+
+## How's and where's
+
+### ssh
+
+```sh
+# Where's the ssh folder:
+~/.ssh
+
+# How to create a new key
+
+# How to add a new host 
+
+# How to connect
+
+```
+
