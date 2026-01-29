@@ -1,0 +1,15 @@
+site_name: My Dev Notes
+theme:
+  name: material
+  palette: 
+    scheme: slate # Dark mode for that hacker aesthetic
+    primary: indigo
+  features:
+    - navigation.tabs
+    - search.suggest
+    - content.code.copy # Adds a "copy" button to your Linux commands
+
+nav:
+  - Home: index.md
+  - Linux: linux.md
+  - Docker: docker.md
