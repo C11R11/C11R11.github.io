@@ -1,4 +1,4 @@
-<a href="https://github.dev/C11R11/C11R11.github.io" class="button">Edit code</button>
+<a href="https://github.dev/C11R11/C11R11.github.io" class="button">Edit code</a>
 
 # My Technical Documentation
 
