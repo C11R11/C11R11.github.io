@@ -9,4 +9,6 @@
 * [🌐 Networking](networking.md) - IP table and SSH configs.
 * [🔧 Terraform](terraform.md) - Terraform
 * [🪈 Github](github.md) - Github
+* [ Git](git.md) - Git
+
 
