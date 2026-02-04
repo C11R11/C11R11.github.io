@@ -1,5 +1,21 @@
 # Lambda
 
+## 🛠 Engineering Maturity Matrix
+
+This project evolved from a proof-of-concept to a production-grade utility. The following table highlights the transition from basic implementation to a Senior DevOps architecture.
+
+| Feature | Baseline Implementation (Junior) | Production-Grade (Senior/DevOps) |
+| :--- | :--- | :--- |
+| **Provisioning** | Manual configuration via AWS Console ("ClickOps"). | **Infrastructure as Code (Terraform)**; reproducible and versioned. |
+| **Deployment** | Manual code entry or ZIP upload in browser. | **Automated CI/CD** via GitHub Actions; deploy on push. |
+| **Security** | Public access or hardcoded API keys. | **Identity-Based Security** (IAM SigV4) with Least Privilege. |
+| **Development** | Testing directly in the Cloud (Live environment). | **Local Simulation** using AWS SAM & Docker for fast feedback. |
+| **Maintainability** | Knowledge lives in the developer's head. | **Self-Documenting** via Git history, README, and Terraform. |
+| **Scalability** | Hard to replicate for other teams/repos. | **Modular Design**; easy to spin up new instances via TF modules. |
+
+---
+*Generated as part of the Artifact Redirector DevEx Initiative.*
+
 ## Create lambda
 
 > THe best way to keep this proffesional is to generate a terraform module, with the bootstrap code and requirements
