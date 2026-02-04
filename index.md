@@ -10,5 +10,6 @@
 * [🔧 Terraform](terraform.md) - Terraform
 * [🪈 Github](github.md) - Github
 * [ Git](git.md) - Git
+* [ AWS](aws.md) - Aws cli
 
 
