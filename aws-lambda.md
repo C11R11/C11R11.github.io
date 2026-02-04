@@ -1,20 +1,6 @@
-# Lambda
+[🏡 Home](index.md)
 
-## 🛠 Engineering Maturity Matrix
-
-This project evolved from a proof-of-concept to a production-grade utility. The following table highlights the transition from basic implementation to a Senior DevOps architecture.
-
-| Feature | Baseline Implementation (Junior) | Production-Grade (Senior/DevOps) |
-| :--- | :--- | :--- |
-| **Provisioning** | Manual configuration via AWS Console ("ClickOps"). | **Infrastructure as Code (Terraform)**; reproducible and versioned. |
-| **Deployment** | Manual code entry or ZIP upload in browser. | **Automated CI/CD** via GitHub Actions; deploy on push. |
-| **Security** | Public access or hardcoded API keys. | **Identity-Based Security** (IAM SigV4) with Least Privilege. |
-| **Development** | Testing directly in the Cloud (Live environment). | **Local Simulation** using AWS SAM & Docker for fast feedback. |
-| **Maintainability** | Knowledge lives in the developer's head. | **Self-Documenting** via Git history, README, and Terraform. |
-| **Scalability** | Hard to replicate for other teams/repos. | **Modular Design**; easy to spin up new instances via TF modules. |
-
----
-*Generated as part of the Artifact Redirector DevEx Initiative.*
+# Lambda Development 
 
 ## Create lambda
 
@@ -127,3 +113,38 @@ curl --location '<url>' \
 --header 'Authorization: ••••••'
 
 ```
+
+# Architectural Best practices
+
+## 🛠 Engineering Maturity Matrix
+
+This project evolved from a proof-of-concept to a production-grade utility. The following table highlights the transition from basic implementation to a Senior DevOps architecture.
+
+| Feature | Baseline Implementation (Junior) | Production-Grade (Senior/DevOps) |
+| :--- | :--- | :--- |
+| **Provisioning** | Manual configuration via AWS Console ("ClickOps"). | **Infrastructure as Code (Terraform)**; reproducible and versioned. |
+| **Deployment** | Manual code entry or ZIP upload in browser. | **Automated CI/CD** via GitHub Actions; deploy on push. |
+| **Security** | Public access or hardcoded API keys. | **Identity-Based Security** (IAM SigV4) with Least Privilege. |
+| **Development** | Testing directly in the Cloud (Live environment). | **Local Simulation** using AWS SAM & Docker for fast feedback. |
+| **Maintainability** | Knowledge lives in the developer's head. | **Self-Documenting** via Git history, README, and Terraform. |
+| **Scalability** | Hard to replicate for other teams/repos. | **Modular Design**; easy to spin up new instances via TF modules. |
+
+---
+*Generated as part of the Artifact Redirector DevEx Initiative.*
+
+
+### 🌐 API Exposure Strategy
+
+Below is the evaluation of how we expose the Lambda function to the network. For this phase, we are utilizing **Function URLs** to maintain high performance and low complexity for internal tooling.
+
+| Feature | Function URL (Current) | API Gateway | Custom DNS (Route 53) |
+| :--- | :--- | :--- | :--- |
+| **Setup Time** | ~10 Seconds | ~10 Minutes | ~5 Minutes |
+| **Cost** | Included with Lambda | $1.00 per 1M requests | Domain cost (~$12/year) |
+| **Auth Options** | IAM SigV4 or Public | IAM, API Keys, JWT, Cognito | N/A (Alias only) |
+| **Best Use Case** | Internal tools, Webhooks | Public APIs, Monetization | Production branding |
+| **Timeout Limit** | 15 Minutes | 29 Seconds | N/A |
+| **Complexity** | Very Low | High | Low |
+
+---
+**Decision:** We are using **Function URLs with IAM Auth** because it provides the best balance of security and speed for our internal GitHub integration without the overhead of a managed gateway.
