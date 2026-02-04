@@ -15,8 +15,9 @@
 └── mock_event.json  # For local testing
 ```
 
-> terraform code
-```sh
+```yml
+# Terraform code
+
 # 1. Package the code into a ZIP automatically
 data "archive_file" "lambda_zip" {
   type        = "zip"
