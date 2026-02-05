@@ -14,4 +14,8 @@ git push -u origin feature/my-new-feature
 # One line for commit 
 git add -A; git commit -m "bla"; git push
 
+# New branch with no history
+git switch --orphan <branch-name>
+git commit --allow-empty -m "Initial empty commit" 
+
 ```
