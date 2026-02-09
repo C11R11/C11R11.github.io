@@ -1,3 +1,7 @@
+[❤️‍🩹 Home](recuperacion.md)
+[1️⃣ Fase1](rutinafase1.md) - Rutina semanal fase 1
+[2️⃣ Fase2](rutinafase2.md) - Rutina semanal fase 2
+
 # RECOMENDACIONES DE DIETA — SOPORTE A FASE 1 y FASE 2  
 **Objetivo:** mantener o reducir peso sin afectar recuperación articular  
 **Contexto:** fuerza + bicicleta + NEAT moderado

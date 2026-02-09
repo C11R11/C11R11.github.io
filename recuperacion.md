@@ -1,7 +1,7 @@
 
 * [1️⃣ Fase1](rutinafase1.md) - Rutina semanal fase 1
-* [2️⃣ Fase1](rutinafase2.md) - Rutina semanal fase 2
-* [2️⃣ Alementacion F1y2](alimentacionfase1y2.md) - Alimentación para fase 1 y 2
+* [2️⃣ Fase2](rutinafase2.md) - Rutina semanal fase 2
+* [🍏 Alementacion F1y2](alimentacionfase1y2.md) - Alimentación para fase 1 y 2
 
 # MAPA DE REEDUCACIÓN – FAI IZQUIERDO + CONDROMALACIA DERECHA
 _(8 semanas orientativas)_
