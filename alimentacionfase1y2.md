@@ -103,125 +103,6 @@ Limitar:
 El objetivo no es bajar rápido,  
 es **bajar sin romper lo que estás arreglando**.
 
-# DIETA EJEMPLO — PAN + FRUTOS SECOS + CENA CONTUNDENTE  
-Objetivo: saciedad real, recomposición corporal y control del dolor  
-Contexto: fuerza + bicicleta + trabajo remoto
-
----
-
-## PRINCIPIOS CLAVE
-- El hambre nocturna es real → se planifica
-- Pan y maní NO se eliminan → se estructuran
-- Proteína suficiente para frenar picoteo
-- Mejor comer “bien” que terminar desordenado
-
----
-
-## REGLAS GENERALES
-- Pan: 1–2 rebanadas al día
-- Maní / frutos secos: 20–25 g
-- Cena: proteína + volumen + algo de carbohidrato
-- Nunca llegar a la noche con déficit grande
-
----
-
-## DÍA CON ENTRENAMIENTO
-
-### Desayuno
-- 2 rebanadas de pan integral  
-- Palta (¼ unidad)
-- 2 huevos o queso magro
-- Café / té
-
-✔ Energía + saciedad temprana  
-✔ Evita hambre acumulada
-
----
-
-### Almuerzo
-- 1 taza de guiso de legumbres  
-  (lentejas / garbanzos / beans con verduras y algo de arroz integral)
-- Verduras adicionales si quieres
-- ❌ Sin pan extra
-
----
-
-### Snack tarde
-- Yogurt griego natural  
-- **Maní o mix frutos secos (20–25 g)**
-
-> Este snack está puesto **a propósito**  
-> para que no llegue la ansiedad nocturna
-
----
-
-### Cena (CONTUNDENTE)
-- Proteína generosa (pollo, pescado, huevos o legumbres)
-- Verduras cocidas o salteadas
-- 1 opción pequeña de carbohidrato:
-  - papa
-  - legumbres
-  - o 1 rebanada de pan integral (si el día fue duro)
-
-✔ Cena sólida = menos picoteo  
-✔ Mejor descanso
-
----
-
-## DÍA SIN ENTRENAMIENTO
-
-### Desayuno
-- 1 rebanada de pan integral  
-- Huevos (2–3)
-- Verduras o palta (¼)
-
----
-
-### Almuerzo
-- 1 taza de guiso de legumbres  
-- Verduras
-- ❌ Sin pan adicional
-
----
-
-### Snack
-- Yogurt griego o quesillo  
-- **Maní / frutos secos (20 g)**
-
----
-
-### Cena (CONTUNDENTE)
-- Proteína
-- Verduras en volumen
-- 1 carbohidrato pequeño:
-  - papa chica  
-  - o legumbres  
-  - o 1 rebanada de pan integral
-
-> En días sin entreno el carbohidrato se queda **solo en la cena**
-
----
-
-## SOBRE EL MANÍ / FRUTOS SECOS
-- Permitidos ✔
-- Medidos ✔
-- Nunca “a puñados”
-- Mejor salados naturales que dulces
-
----
-
-## SEÑALES DE QUE ESTE PLAN TE CALZA
-✔ No llegas desesperado a la noche  
-✔ Comes cena y quedas tranquilo  
-✔ Menos picoteo fuera de plan  
-✔ El peso empieza a moverse sin sufrimiento  
-
----
-
-## FRASE CLAVE PARA TI
-> Prefiero una **cena fuerte y planificada**  
-> que una noche entera negociando con el maní.
-
 ## Snacks y manejo del hambre (integrado a la dieta)
 
 ### Snacks de libre demanda
@@ -299,3 +180,94 @@ Dado que el hambre suele aumentar en la noche:
 Objetivo:
 - evitar llegar a la noche con hambre acumulada
 - mantener adherencia sin prohibiciones
+
+# Ejemplo de día de alimentación – Ajustado a entrenamiento y saciedad
+
+## Objetivo
+- Mantener o bajar peso sin pasar hambre
+- Mejorar reparto de energía durante el día
+- Evitar llegar a la cena con hambre acumulada
+
+---
+
+## 🌅 Desayuno (ligero, sin forzar)
+- Café o té
+- Leche descremada (1 vaso)
+- Yogur bajo en grasas (1 taza)
+- 1 fruta (manzana verde o similar)
+
+Opcional si entrenas ese día:
+- 1 plátano pequeño
+
+---
+
+## 🍽 Almuerzo (CLAVE del día)
+Base:
+- 1 taza de guiso de legumbres  
+  (lentejas / garbanzos / beans con verduras)
+- Arroz integral (½ taza cocida)
+
+Añadir UNA fuente de proteína:
+- 1 huevo  
+  o
+- 80–100 g pollo / pescado  
+  o
+- Yogur bajo en grasas
+
+Objetivo: llegar a la tarde sin déficit acumulado.
+
+---
+
+## 🕓 Snack de tarde (saciante)
+Elegir UNA opción:
+
+**Opción A**
+- 2 huevos duros
+- 10 g maní salado o mix frutos secos
+
+**Opción B**
+- Yogur bajo en grasas
+- Manzana verde
+- 1 cda semillas (chía o linaza)
+
+Este snack es CLAVE para no desbordarse en la cena.
+
+---
+
+## 🌙 Cena (contundente y controlada)
+- 2 rebanadas de pan integral  
+  (≈ 60–70 g)
+- ½ palta
+- Queso (porción moderada)
+- Café con leche descremada
+
+Si queda hambre:
+- Zanahoria / pepino (libre)
+- Infusión caliente
+
+Evitar:
+- Frutos secos en la noche
+- Comer “por ansiedad”
+
+---
+
+## 🍎 Snacks de libre demanda
+- Zanahoria
+- Pepino
+- Apio
+- Té / infusión
+
+---
+
+## Notas importantes
+- El pan NO se elimina (mejora adherencia)
+- El maní se usa medido (10 g)
+- La saciedad se construye al mediodía, no en la noche
+- Yogur bajo en grasas puede reemplazar al griego sin problema
+
+---
+
+## Señal de que el plan funciona
+- Hambre más pareja durante el día
+- Menos ansiedad nocturna
+- Mejor recuperación del entrenamiento
