@@ -81,6 +81,22 @@ Limitar:
 - “Puñados” de frutos secos
 - Snacks automáticos por estrés
 
+### Snack proteína-grasa
+
+**Opción**
+- 2 huevos duros
+- 10 g maní salado
+
+**Uso**
+- Media tarde
+- Hambre real
+- Días sin entrenamiento intenso
+
+**Evitar**
+- Acompañar con pan o arroz
+- Comer tarde por ansiedad
+
+
 ---
 
 ## NOTA FINAL
