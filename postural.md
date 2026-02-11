@@ -1,6 +1,6 @@
 [❤️‍🩹 Home](recuperacion.md) |
 
-## Mini rutina postural – Escritorio (5–6 min)
+## Mini rutina postural 1 – Escritorio (5–6 min)
 
 **Frecuencia**
 - 2–3 veces al día
@@ -51,3 +51,30 @@ Objetivo: sacar al glúteo izquierdo del rol defensivo
 - 4–5 respiraciones profundas
 
 Objetivo: elevar hombro sin forzarlo
+
+### Mini rutina postural 2 + descarga (2–3 veces al día)
+
+#### 1. Descarga de glúteo medio izquierdo (2 min)
+- Pelota o mano
+- Zona: justo sobre la cresta ilíaca
+- Presión suave, respirando lento
+
+#### 2. Activación bilateral de glúteos (2 x 8 reps)
+- Clam shell IZQUIERDO y DERECHO
+- Muy lento
+- Sin llegar a fatiga
+
+#### 3. Balance pélvico sentado (1 min)
+- Sentado
+- Inclina pelvis adelante y atrás
+- Movimiento pequeño, controlado
+
+#### 4. Corrección de hombro derecho (2 x 6 reps)
+- Eleva hombros
+- Suelta lento
+- Enfócate en que el derecho NO colapse
+
+#### 5. Extensión suave de rodilla (1 min)
+- Sentado
+- Estira y flexiona la rodilla sin peso
+- Rango cómodo

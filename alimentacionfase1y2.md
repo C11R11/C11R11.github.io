@@ -271,3 +271,150 @@ Evitar:
 - Hambre más pareja durante el día
 - Menos ansiedad nocturna
 - Mejor recuperación del entrenamiento
+
+# Proteinas
+
+🎯 Objetivo diario de proteína (asumido)
+
+Peso: 70 kg
+
+Objetivo razonable (recuperación + fuerza):
+≈ 1,5 g/kg → ~105 g de proteína/día
+
+| Día | Desayuno (~20–25g) | Snack AM (~10–15g) | Almuerzo (~30–35g) | Snack PM (~10–15g) | Cena (~20–25g) | Total aprox |
+|----|--------------------|--------------------|--------------------|--------------------|----------------|-------------|
+| 1 | 2 huevos + 200 ml leche | Yogurt descremado (240 g) | Pechuga pollo 120 g | Quesillo x2 porciones | 2 huevos + 2 rebanadas pan | ~105 g |
+| 2 | Yogurt 240 g + 200 ml leche | 1 huevo + 10 g maní | Carne molida 1/2 taza | Yogurt 120 g | Lentejas 1 taza | ~108 g |
+| 3 | 2 huevos + pan integral | Yogurt 120 g | Pechuga pollo 150 g | Quesillo x2 | Garbanzos 1 taza | ~110 g |
+| 4 | Yogurt 240 g | 2 huevos | Carne molida 1/2 taza | 200 ml leche + maní 10 g | Porotos 1 taza | ~102 g |
+| 5 | 2 huevos + 200 ml leche | Yogurt 120 g | Pechuga pollo 120 g | Quesillo x2 | 2 huevos + queso gauda | ~106 g |
+
+
+# Protección colesterol
+
+🧠 Idea central (importante)
+
+El colesterol no sube solo por comer huevos o queso, sino por la combinación de:
+
+Exceso de grasas saturadas
+
+Poca fibra
+
+Snacks grasos sin proteína ni volumen
+
+Comer mucha grasa de noche, cuando el gasto es bajo
+
+👉 Entonces no hay que eliminar, sino reordenar.
+
+🟢 Ajustes clave (sin perder lo que te gusta)
+1️⃣ Huevos → mantener, pero con estrategia
+
+Máx recomendado diario:
+👉 1 huevo entero + claras extra
+
+Ejemplo:
+
+1 huevo entero + 2 claras = misma proteína, menos colesterol
+
+✔️ Mantienes saciedad
+✔️ Mejor perfil lipídico
+
+2️⃣ Quesos → cambiar tipo y momento
+
+Reduce gauda frecuente
+
+Prioriza:
+
+Quesillo
+
+Yogurt descremado
+
+Leche descremada
+
+👉 El queso más graso:
+
+Mejor post-entreno
+
+No como base diaria nocturna
+
+3️⃣ Carne molida → elegir magra
+
+Ideal:
+
+Carne molida 5–7% grasa
+
+Frecuencia:
+
+2–3 veces por semana (ok)
+
+No diaria
+
+4️⃣ Maní y frutos secos (clave para el colesterol)
+
+El problema no es el maní, es cómo se come.
+
+❌ Puñado solo
+✔️ Maní siempre combinado
+
+Ejemplo correcto:
+
+Yogurt + maní
+
+Huevo + maní
+
+Leche + maní
+
+👉 10–15 g máximo por toma
+
+Esto:
+
+Evita picos calóricos
+
+Mejora saciedad
+
+Protege perfil lipídico
+
+🟢 Los grandes aliados para cuidar colesterol (y que ya comes)
+🥬 Legumbres (esto es oro para ti)
+
+Lentejas, garbanzos, porotos
+
+Fibra + proteína + control glicémico
+
+👉 1 taza diaria = protección cardiovascular real
+
+🍞 Pan integral (sí, mantenlo)
+
+2 rebanadas ≈ 60–70 g
+
+Ideal:
+
+Desayuno
+
+Cena acompañado de proteína
+
+👉 El problema nunca fue el pan, sino pan + grasa sola
+
+Desayuno:
+- 1 huevo + 2 claras
+- 2 rebanadas pan integral
+- Palta
+- Leche descremada
+
+Snack AM:
+- Yogurt descremado
+- 10 g maní
+
+Almuerzo:
+- Legumbres (1 taza)
+- Arroz integral
+- Verduras
+
+Snack PM:
+- 2 huevos duros
+- Zanahoria cruda
+
+Cena:
+- Pechuga de pollo / legumbres
+- Pan integral
+- Verduras

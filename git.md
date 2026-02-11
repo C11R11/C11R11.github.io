@@ -18,4 +18,9 @@ git add -A; git commit -m "bla"; git push
 git switch --orphan <branch-name>
 git commit --allow-empty -m "Initial empty commit" 
 
+# Know the repository url
+git remote -v
+
+# Clone w
+
 ```
