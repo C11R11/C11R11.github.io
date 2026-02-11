@@ -21,6 +21,9 @@ git commit --allow-empty -m "Initial empty commit"
 # Know the repository url
 git remote -v
 
-# Clone w
+# Clone with token 
+git clone https://<PAT>@github.com/<ORG>/<repo-name>.git
+
+
 
 ```

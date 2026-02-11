@@ -19,6 +19,16 @@
 | **Logs** | `journalctl -xe` | View system logs for troubleshooting |
 | **Logs** | `tail -f /var/log/syslog` | Watch logs in real-time |
 
+## Files
+
+```sh
+# Compare two files and show them
+diff -y file1.txt file2.txt
+
+# Compare at byte level
+cmp file1.bin file2.bin
+```
+
 ## How's and where's
 
 ### ssh
@@ -32,6 +42,8 @@
 # How to add a new host 
 
 # How to connect
+
+
 
 ```
 
