@@ -15,6 +15,8 @@
 - [ ] **Workflow:** Init, Plan, Apply, Destroy.
 - [ ] **Terraform Cloud & Enterprise:** Diferencias básicas y Sentinel (Policy as Code).
 
+https://developer.hashicorp.com/terraform/tutorials/certification-004
+
 ---
 
 ## 📍 Fase 2: Consolidación Cloud (Semanas 4-8)
@@ -36,6 +38,9 @@
 
 ### Opción B: Enfoque en DevSecOps
 - [ ] **GitHub Actions Certification:** Certificación oficial de GitHub para automatización de workflows y seguridad (SAST/SCA).
+
+https://learn.microsoft.com/en-us/credentials/certifications/github-actions/?practice-assessment-type=certification
+https://learn.microsoft.com/en-us/credentials/certifications/github-advanced-security/?practice-assessment-type=certification
 
 ---
 
