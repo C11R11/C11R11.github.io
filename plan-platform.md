@@ -1,20 +1,3 @@
-<a href="https://github.dev/C11R11/C11R11.github.io" class="button">Edit code</a>
-
-# My Technical Documentation
-
-### 📑 Navigation
-
-* [🐧 Linux](linux.md) - Common CLI tools and shortcuts.
-* [🐳 Docker Notes](docker.md) - Containers, Images, and Compose.
-* [🌐 Networking](networking.md) - IP table and SSH configs.
-* [🔧 Terraform](terraform.md) - Terraform
-* [🪈 Github](github.md) - Github
-* [ Git](git.md) - Git
-
-# Plan general platform engineer
-
-Plan para perfección en platform engineering y desarrollo.
-
 # 🗺️ Roadmap de Certificaciones: Platform Engineer & SDLC Specialist
 
 **Estrategia:** Priorizar la automatización y herramientas de plataforma para destacar como un "DevOps que entiende al Desarrollador".
@@ -45,9 +28,6 @@ Plan para perfección en platform engineering y desarrollo.
 - [ ] **Seguridad:** KMS, Secrets Manager y Roles de IAM para aplicaciones.
 - [ ] **Observabilidad:** AWS X-Ray y CloudWatch Logs/Metrics.
 
-* [ AWS Lambda](aws-lambda.md) - Aws lambda
-* [Aws developer](aws-cert) - Plan estudio certificación aws developer
-
 ---
 
 ## 📍 Fase 3: Especialización y Diferenciación (Semanas 12+)
@@ -74,4 +54,3 @@ Plan para perfección en platform engineering y desarrollo.
 1. **El "Combo" Ganador:** En Chile, las empresas que usan AWS casi siempre usan Terraform. Tener ambas certificaciones te pone en el 5% superior de los postulantes.
 2. **Postulación Activa:** No esperes a tener la de AWS. Apenas obtengas la de **Terraform**, actualiza tu perfil. Esa certificación sola ya te abrirá entrevistas para cargos de **Platform Engineer**.
 3. **Proyectos Reales:** Para cada certificación, intenta tener un repo en GitHub que diga: "Infraestructura de ECS desplegada con Terraform" o "Pipeline de CI/CD con seguridad integrada".
-
