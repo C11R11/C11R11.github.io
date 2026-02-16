@@ -39,8 +39,16 @@ https://developer.hashicorp.com/terraform/tutorials/certification-004
 ### Opción B: Enfoque en DevSecOps
 - [ ] **GitHub Actions Certification:** Certificación oficial de GitHub para automatización de workflows y seguridad (SAST/SCA).
 
-https://learn.microsoft.com/en-us/credentials/certifications/github-actions/?practice-assessment-type=certification
-https://learn.microsoft.com/en-us/credentials/certifications/github-advanced-security/?practice-assessment-type=certification
+> Preparación Github actions
+* https://learn.microsoft.com/en-us/credentials/certifications/github-actions/?practice-assessment-type=certification
+> Preparación Github secutiry
+* https://learn.microsoft.com/en-us/credentials/certifications/github-advanced-security/?practice-assessment-type=certification
+
+### Recursos
+
+> Esta guia permite crear una imagen desde un build dotnet, subir la imágen a un contenedor, y desplegar en un cluster azure <br>
+* [Deploy a cloud-native .NET microservice automatically with GitHub Actions and Azure Pipelines](https://learn.microsoft.com/en-us/training/modules/microservices-devops-aspnet-core/)
+
 
 ---
 
