@@ -1,5 +1,7 @@
 # 🎯 Checklist de Preparación: GitHub Actions Certification (GH-200)
 
+* [Github](github.md) - Github
+
 Este repositorio contiene ejercicios prácticos para cubrir los objetivos del examen oficial.
 
 ### 🔄 Comparativa Técnica: Soluciones Ad-hoc vs. Estándar Enterprise

@@ -1,3 +1,5 @@
+* [ AWS Lambda](aws-lambda.md) - Aws lambda
+
 # 🚀 Plan de Choque: AWS Certified Developer Associate (DVA-C02)
 
 **Objetivo:** Aprobar el examen en tiempo récord priorizando el perfil de Platform Engineering y SDLC.

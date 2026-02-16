@@ -1,5 +1,11 @@
 # Mapa Conceptual: La Explosión de la Demanda DevOps en 2026
 
+## 📑 Navigation
+
+* [Repos](repos.md) - Listado de repositorios para laboratorio para todas las certificaciones
+* [Github cert](github-cert.md) Guia certificación github (GH-200)
+* [Aws developer](aws-cert) - Plan estudio certificación aws developer
+
 ## 1. El Contexto del Mercado (La "Ventana de Oportunidad")
 * **Ciclo Histórico:** DevOps hoy = Ingeniería de Software hace 10 años.
     * *Pasado:* Alta demanda/baja oferta permitió entrar con bases sencillas.
@@ -83,9 +89,6 @@ Plan para perfección en platform engineering y desarrollo.
 - [ ] **Seguridad:** KMS, Secrets Manager y Roles de IAM para aplicaciones.
 - [ ] **Observabilidad:** AWS X-Ray y CloudWatch Logs/Metrics.
 
-* [ AWS Lambda](aws-lambda.md) - Aws lambda
-* [Aws developer](aws-cert) - Plan estudio certificación aws developer
-
 ---
 
 ## 📍 Fase 3: Especialización y Diferenciación (Semanas 12+)
@@ -95,8 +98,7 @@ Plan para perfección en platform engineering y desarrollo.
 ### Opción B: Enfoque en DevSecOps
 - [ ] **GitHub Actions Certification:** Certificación oficial de GitHub para automatización de workflows y seguridad (SAST/SCA).
 
-* [Github cert](github-cert.md) Guia certificación github (GH-200)
-* [Github](github.md) - Github
+
 
 ---
 
@@ -115,68 +117,3 @@ Plan para perfección en platform engineering y desarrollo.
 1. **El "Combo" Ganador:** En Chile, las empresas que usan AWS casi siempre usan Terraform. Tener ambas certificaciones te pone en el 5% superior de los postulantes.
 2. **Postulación Activa:** No esperes a tener la de AWS. Apenas obtengas la de **Terraform**, actualiza tu perfil. Esa certificación sola ya te abrirá entrevistas para cargos de **Platform Engineer**.
 3. **Proyectos Reales:** Para cada certificación, intenta tener un repo en GitHub que diga: "Infraestructura de ECS desplegada con Terraform" o "Pipeline de CI/CD con seguridad integrada".
-
-
-# 🗺️ Roadmap de Certificaciones: Arquitectura de Laboratorios
-
-Este documento define la estructura de la Organización y los Repositorios diseñados para cubrir los objetivos de las certificaciones **GH-200 (GitHub)**, **Terraform Associate** y **AWS Developer**.
-
----
-
-## 🏢 1. Organización: `cert-labs-hq` (Gobernanza)
-**Propósito:** Simular un entorno Enterprise para practicar políticas de seguridad y control de acceso.
-
-* **Owner:** Tu cuenta principal.
-* **Teams:**
-    * `platform-admins`: Control total de IaC y Workflows.
-    * `developers`: Acceso limitado a repos de aplicaciones.
-* **Configuración clave:**
-    * **Organization Secrets:** Almacenar el `AWS_ROLE_ARN` para OIDC.
-    * **Settings:** Restringir la creación de repositorios y forzar MFA.
-
----
-
-## 📂 2. Repositorio: `dev-ops` (The Golden Path)
-**Propósito:** Repositorio central de herramientas y automatización reutilizable.
-
-* **Contenido:**
-    * `.github/workflows/`: Reusable Workflows (CI para Node, Deploy de Terraform).
-    * `.github/actions/`: Custom Composite Actions para tareas repetitivas (ej: setup de entorno).
-* **Prácticas GH-200:**
-    * Versionado de acciones vía Tags (`v1.0.0`).
-    * Uso de `workflow_call` y herencia de secretos.
-
----
-
-## 🏗️ 3. Repositorio: `infrastructure` (IaC & Cloud)
-**Propósito:** Gestión de recursos en AWS mediante Terraform.
-
-* **Estructura Sugerida:**
-```text
-/modules        -> Lógica de recursos (VPC, S3, RDS).
-/environments   -> Implementación (dev/prod) con Remote State.
-```
-* **Prácticas Terraform/AWS:**
-    * **State Management:** S3 + DynamoDB para Locking.
-    * **Identidad:** Conexión vía OIDC (sin AWS Keys manuales).
-    * **Seguridad:** Encriptación de Buckets y políticas de IAM mínimas.
-
----
-
-## 🚀 4. Repositorios de Aplicación (App Use Cases)
-**Propósito:** Repositorios ligeros que consumen la infraestructura y los flujos DevOps.
-
-* **Ejemplos:** `app-node-express`, `app-python-api`.
-* **Interacción:**
-    * El código vive aquí, pero el **CI/CD** es una llamada al repo `dev-ops`.
-    * El **Despliegue** se gatilla hacia los recursos creados por el repo `infrastructure`.
-* **Prácticas Clave:**
-    * **Environments:** Uso de aprobación manual para despliegue a `Production`.
-    * **Dependabot:** Escaneo automático de vulnerabilidades.
-
----
-
-## 💡 Notas de Implementación
-> 1. Todos los repositorios serán **Públicos** en la Organización para habilitar las funciones de Environments y Rulesets sin costo.
-> 2. Se utilizará un **"Segundo Desarrollador"** (cuenta secundaria) para validar Pull Requests y probar las Branch Protection Rules.
-> 3. El flujo de trabajo estándar será: `Fork/Branch` -> `Pull Request` -> `Status Checks (Actions)` -> `Review` -> `Merge`.
