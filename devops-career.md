@@ -95,6 +95,9 @@ Plan para perfección en platform engineering y desarrollo.
 ### Opción B: Enfoque en DevSecOps
 - [ ] **GitHub Actions Certification:** Certificación oficial de GitHub para automatización de workflows y seguridad (SAST/SCA).
 
+* [Github cert](github-cert.md) Guia certificación github (GH-200)
+* [Github](github.md) - Github
+
 ---
 
 ## 📈 Impacto en el Perfil de LinkedIn / CV
