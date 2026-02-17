@@ -55,6 +55,25 @@ Este documento define la estructura de la Organización y los Repositorios dise�
     * **Environments:** Uso de aprobación manual para despliegue a `Production`.
     * **Dependabot:** Escaneo automático de vulnerabilidades.
 
+## 5.- ☸️ Repositorio: `gitops-manifests` (Argo CD / GitOps)
+**Propósito:** Gestionar el estado deseado del clúster de Kubernetes siguiendo el modelo GitOps.
+
+* **Estructura:**
+    ```text
+    /apps/
+      /node-app/
+        /overlays/
+          /dev/       -> Configuración específica para desarrollo
+          /prod/      -> Configuración con réplicas y recursos de producción
+        /base/        -> Manifiestos base (Kustomize/Helm)
+    /clusters/
+      /aws-eks-01/    -> Configuración del Application Controller de Argo
+    ```
+* **Prácticas clave:**
+    * **Self-healing:** Probar cómo Argo CD revierte cambios manuales hechos con `kubectl`.
+    * **Sync Strategies:** Configurar despliegues automáticos (Pruning/Recurse).
+    * **App-of-Apps Pattern:** Usar un manifiesto de Argo para desplegar múltiples aplicaciones a la vez.
+
 ---
 
 ## 💡 Notas de Implementación
