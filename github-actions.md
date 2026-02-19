@@ -1,3 +1,5 @@
+[Github cert](github-cert.md)
+
 # GH-200: JavaScript vs. Docker vs. Bash (Composite) Actions
 
 In the certification exam, you will likely be asked to choose the "Best Action Type" for a specific scenario. Use this comparison as your guide.
