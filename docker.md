@@ -1,3 +1,0 @@
-[🏡 Home](index.md)
-
-> Soon.... 🚧

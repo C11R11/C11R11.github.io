@@ -1,4 +1,4 @@
-[🏡 Home](index.md)
+[back](cli-index)
 
 # Basics
 
@@ -14,4 +14,18 @@ gh repo list <owner> --limit 1000
 
 # Search for a repo 
 gh search repos <match-word> --owner=<owner>
+
+# Login
+gh auth login
+
+# Logout
+gh auth logout
+
+# Set the PAT
+export GITHUB_TOKEN=<token-here>
+export GITHUB_OWNER=<owner-here>
+
+# A fine grained PAT must be defined instead of classic. For example
+# to be able to create teams with terraform, it's needed to add a nde
+# fine-grained token with Members permision (Organization members and teams)
 ```
