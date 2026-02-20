@@ -2,6 +2,7 @@
 
 * [Github](cli-github.md) - Github
 * [Github actions](github-actions.md) - Github actions
+* [GH-200 checklist](github-cert-checklist.md) - GH-200: GitHub Actions Certification Checklist
 
 
 Este repositorio contiene ejercicios prácticos para cubrir los objetivos del examen oficial.
@@ -279,31 +280,3 @@ You will be asked for the exact syntax for runner communication.
 3.  **[Secure your Automation](https://learn.microsoft.com/en-us/training/modules/secure-github-actions-workflows/)** - Focus on OIDC and secret management.
 
 
-# GitHub Certification Lab Plan
-
-## Phase 1: Infrastructure & Governance (Terraform)
-- [ ] **Create `org-governance` Repo:** (Private/Internal) To store your Terraform code.
-- [ ] **Build `github_repo` Module:**
-    - [ ] Add `github_repository` resource.
-    - [ ] Add `github_repository_ruleset` (Repo-level rules for Public repos).
-    - [ ] Include **Branch Protection** (Required PRs, Dismiss stale reviews).
-- [ ] **Deploy Test Repo:** Use your module to spin up a **Public** repo called `lab-action-testing`.
-
-## Phase 2: Action Development (The "Custom" Skill)
-- [ ] **Create `custom-action-js` Repo:** - [ ] Initialize `action.yml` (Metadata).
-    - [ ] Write a simple Node.js logic (or Docker entrypoint).
-    - [ ] **Goal:** Practice using `inputs`, `outputs`, and `core.setFailed`.
-
-## Phase 3: The CI/CD Pipeline
-- [ ] **Minimal CI Workflow:** - [ ] Implement `on: push` and `on: pull_request`.
-    - [ ] Add a `lint` and `test` job.
-- [ ] **Artifact & Container Logic:**
-    - [ ] Use `actions/upload-artifact@v4`.
-    - [ ] Practice a Docker build (even if you just push to **GitHub Packages / GHCR** instead of ECR for now).
-
-## Phase 4: Enterprise CD & Compliance (The Exam "Heavy Hitters")
-- [ ] **Setup Environments:** - [ ] Create `staging` and `production` environments in the UI.
-    - [ ] **Approvals:** Add yourself as a "Required Reviewer" for `production`.
-    - [ ] **Secrets:** Create an "Environment Secret" and see how it overrides "Repo Secrets."
-- [ ] **Concurrency:** Add a `concurrency` group to your YAML to prevent overlapping deploys.
-- [ ] **Analysis:** Review the logs. Identify the difference between `GITHUB_TOKEN` permissions and manual secrets.
