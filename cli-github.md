@@ -15,6 +15,9 @@ gh repo list <owner> --limit 1000
 # Search for a repo 
 gh search repos <match-word> --owner=<owner>
 
+#Allows you to watch the output directly in your terminal.
+gh run view --log
+
 # Login
 gh auth login
 
