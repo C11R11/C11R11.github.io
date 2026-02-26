@@ -35,5 +35,8 @@ git config user.email
 git config --global user.name "name"
 git config --global user.email "email"
 
+# Emergency: The remote was erased and recreated but empty. I need to push my local repo
+git push --force-with-lease
+
 
 ```

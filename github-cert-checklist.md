@@ -3,7 +3,7 @@
 ## 1. Author and Manage Workflows (20–25%)
 
 ### Configure workflow triggers and events
-- [ ] **Configure workflows to run for scheduled, manual, webhook, and repository events** (`on: schedule: - cron:`, `on: workflow_dispatch:`, `on: push:`, `on: pull_request:`)
+- [x] **Configure workflows to run for scheduled, manual, webhook, and repository events** (`on: schedule: - cron:`, `on: workflow_dispatch:`, `on: push:`, `on: pull_request:`)
 - [ ] **Choose appropriate scope, permissions, and events for workflow automation** (`permissions: contents: read`, `pull_request` vs `pull_request_target`)
 - [ ] **Define and validate workflow_dispatch inputs (types, required, defaults) and pass inputs to reusable workflows via workflow_call with inputs and secrets mapping** (`inputs: name: type: string, default: 'val'`, `with: arg: ${{ inputs.name }}`, `secrets: inherit`)
 
