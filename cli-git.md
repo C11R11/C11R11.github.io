@@ -26,6 +26,14 @@ git remote -v
 # Clone with token 
 git clone https://<PAT>@github.com/<ORG>/<repo-name>.git
 
+# What's my git user and email
+git config user.name
+git config user.email
+
+
+# Change the name and email
+git config --global user.name "name"
+git config --global user.email "email"
 
 
 ```
