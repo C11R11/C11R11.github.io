@@ -50,7 +50,7 @@
 - [ ] **Identify and implement action types (JavaScript, Docker, composite); understand immutable actions rollout on hosted runners and implications for version pinning and registry sources** (`using: 'node20'`, `using: 'docker'`, `using: 'composite'`; `uses: actions/checkout@v4` vs `@SHA`)
 - [ ] **Troubleshoot action execution and errors** (Inspect `dist/` for JS actions, check `ENTRYPOINT` for Docker, and shell context for Composite)
 
-> In a Composite Action, the shell: bash line is mandatory for every run step. In a standard Workflow job, it is optional (it defaults to bash on Linux), but the GH-200 exam loves to trick you by omitting it in a Composite Action.
+> * In a Composite Action, the shell: bash line is mandatory for every run step. In a standard Workflow job, it is optional (it defaults to bash on Linux), but the GH-200 exam loves to trick you by omitting it in a Composite Action.
 
 ### Define action structure and metadata
 - [ ] **Specify required files, directory structure, and metadata** (`action.yml` file, `inputs:`, `outputs:`, `runs:`)
@@ -86,9 +86,9 @@
 - [ ] **Mitigate script injection (sanitize/validate inputs, least-privilege permissions, avoid untrusted data in run:, proper shell quoting, prefer vetted actions over inline scripts)** (Use `env` variables for `${{ github.event... }}` instead of direct expansion in `run:`)
 - [ ] **Understand GITHUB_TOKEN lifecycle (ephemeral, scoped), configure granular permissions, contrast with PAT; restrict write scopes** (`permissions: contents: read`, `pull-requests: write`)
 
-> Token Scoping: Fine-grained PATs must have the Organization as the Resource Owner to modify Org repos; otherwise, you get the 403 you encountered.
-> The "Metadata" Base: Every token needs at least metadata: read to even see a repository's exists via the API.
-> To create repos you need the Administration and Content permission (read and write)
+> * Token Scoping: Fine-grained PATs must have the Organization as the Resource Owner to modify Org repos; otherwise, you get the 403 you encountered.
+> * The "Metadata" Base: Every token needs at least metadata: read to even see a repository's exists via the API.
+> * To create repos you need the Administration and Content permission (read and write)
 
 - [ ] **Use OIDC token (id-token permission) for cloud provider federation to eliminate long-lived cloud secrets** (`permissions: id-token: write`, `uses: aws-actions/configure-aws-credentials@v4`)
 - [ ] **Pin third-party actions to full commit SHAs; align with immutable actions enforcement on hosted runners; avoid floating @main/@v* without justification** (`uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29`)
