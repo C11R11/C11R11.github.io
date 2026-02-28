@@ -7,6 +7,34 @@
 - [ ] **Choose appropriate scope, permissions, and events for workflow automation** (`permissions: contents: read`, `pull_request` vs `pull_request_target`)
 - [ ] **Define and validate workflow_dispatch inputs (types, required, defaults) and pass inputs to reusable workflows via workflow_call with inputs and secrets mapping** (`inputs: name: type: string, default: 'val'`, `with: arg: ${{ inputs.name }}`, `secrets: inherit`)
 
+> GITHUB_TOKEN: Github token created automatically for be used on a workflow run. The token is only for the repo that contains the workflow, and expires when the workflows ends. Can be called with {{secrets.GITHUB_TOKEN}} or {{github.token}}. Can be passed in the with for an action, or in a env in a step. It's more secure to use this token instead of a fine-graned or classic PAT, because it expires.
+
+[how to use the GITHUB_TOKEN to authenticate on behalf of GitHub Actions.](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token#permissions-for-the-github_token)
+
+> The GITHUB_TOKEN permissions can be changes to be more restrictive by an admin
+
+> Also can be grant or deny granually, this is by adding the "permissions" tag on the workflow. All the permission define here will be granted, and all not mention will be denied. The permissions can be added globally, and again in a step or job level.
+
+> If you move your workflow to a different organization that has the "Restricted" default, your workflow will break unless you have explicitly requested the permissions it needs.
+
+```sh
+# This sets permissions for EVERY job in the workflow
+permissions:
+  contents: write    # Allow pushing code/creating tags
+  pull-requests: read # Allow reading PR data
+  issues: write      # Allow commenting on issues
+
+
+$gh auth status                                                                                                               
+github.com
+  ✓ Logged in to github.com account C11R11 (keyring)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: gho_************************************
+  - Token scopes: 'gist', 'read:org', 'repo', 'workflow'
+
+```
+
 ### Design and implement workflow structure
 - [ ] **Use jobs, steps, and conditional logic** (`jobs:`, `steps:`, `if: github.event_name == 'push'`)
 - [ ] **Implement dependencies between jobs** (`needs: [job_a, job_b]`)
