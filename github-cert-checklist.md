@@ -4,18 +4,53 @@
 
 ### Configure workflow triggers and events
 - [ ] **Configure workflows to run for scheduled, manual, webhook, and repository events** (`on: schedule: - cron:`, `on: workflow_dispatch:`, `on: push:`, `on: pull_request:`)
+
+> The exam will test your ability to choose the right trigger for the right scenario: 
+> * Scheduled (schedule): Best for nightly builds or security scans (uses cron syntax).
+> * Manual (workflow_dispatch): Best for testing or "one-off" administrative tasks.
+> * Webhook (repository_dispatch): Best when an external system needs to start a process in GitHub.
+> * Repository Events: Triggers based on internal GitHub actions like push, pull_request, release, or label.
+
+> Notes:
+> * For repository_dispatch to work, the request must be sent to the default branch (usually main). If you try to trigger a webhook event on a feature branch, it won't fire unless that workflow file also exists on the default branch.
+> * If a question asks if a cron job is "real-time precise," the answer is no.
+> * Default Branch Requirement: Similar to webhooks, the workflow file must exist on the default branch (usually main) for the schedule to trigger.
+
 - [ ] **Choose appropriate scope, permissions, and events for workflow automation** (`permissions: contents: read`, `pull_request` vs `pull_request_target`)
-- [ ] **Define and validate workflow_dispatch inputs (types, required, defaults) and pass inputs to reusable workflows via workflow_call with inputs and secrets mapping** (`inputs: name: type: string, default: 'val'`, `with: arg: ${{ inputs.name }}`, `secrets: inherit`)
-
-> GITHUB_TOKEN: Github token created automatically for be used on a workflow run. The token is only for the repo that contains the workflow, and expires when the workflows ends. Can be called with {{secrets.GITHUB_TOKEN}} or {{github.token}}. Can be passed in the with for an action, or in a env in a step. It's more secure to use this token instead of a fine-graned or classic PAT, because it expires.
-
-[how to use the GITHUB_TOKEN to authenticate on behalf of GitHub Actions.](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token#permissions-for-the-github_token)
 
 > The GITHUB_TOKEN permissions can be changes to be more restrictive by an admin
 
 > Also can be grant or deny granually, this is by adding the "permissions" tag on the workflow. All the permission define here will be granted, and all not mention will be denied. The permissions can be added globally, and again in a step or job level.
 
 > If you move your workflow to a different organization that has the "Restricted" default, your workflow will break unless you have explicitly requested the permissions it needs.
+
+### GitHub Actions Cron Syntax: The Schedule Cheat Sheet
+
+GitHub uses a five-field format (UTC time) to schedule workflows.
+
+`┌───────────── minute (0 - 59)`
+`│ ┌─────────── hour (0 - 23)`
+`│ │ ┌───────── day of the month (1 - 31)`
+`│ │ │ ┌─────── month (1 - 12 or JAN-DEC)`
+`│ │ │ │ ┌───── day of the week (0 - 6 or SUN-SAT)`
+`│ │ │ │ │`
+`* * * * *`
+
+| Frequency | Cron Expression | Notes |
+| :--- | :--- | :--- |
+| **Every 15 Minutes** | `*/15 * * * *` | Great for frequent polling or small checks. |
+| **Daily at Midnight** | `0 0 * * *` | Standard for nightly builds or cleanups. |
+| **Weekly (Sundays)** | `0 0 * * 0` | Use `SUN` or `0` for Sunday. |
+| **Business Hours** | `0 9 * * 1-5` | Runs at 9:00 AM UTC, Monday through Friday. |
+| **Quarterly** | `0 0 1 */3 *` | Runs at midnight on the 1st of every 3rd month. |
+
+---
+
+### 🎓 GH-200 Exam "Watch-Outs" (Domain 1.2)
+
+* **UTC Only**: All schedules are evaluated in UTC; you must manually calculate offsets for local time zones.
+* **Best Effort**: Scheduled workflows can be delayed during peak GitHub load; they are not real-time precise.
+* **Default Branch**: The workflow file MUST exist on the default branch (usually `main`) for the cron to trigger.
 
 ```sh
 # This sets permissions for EVERY job in the workflow
@@ -32,6 +67,13 @@ github.com
   - Git operations protocol: https
   - Token: gho_************************************
   - Token scopes: 'gist', 'read:org', 'repo', 'workflow'
+
+
+- [ ] **Define and validate workflow_dispatch inputs (types, required, defaults) and pass inputs to reusable workflows via workflow_call with inputs and secrets mapping** (`inputs: name: type: string, default: 'val'`, `with: arg: ${{ inputs.name }}`, `secrets: inherit`)
+
+> GITHUB_TOKEN: Github token created automatically for be used on a workflow run. The token is only for the repo that contains the workflow, and expires when the workflows ends. Can be called with {{secrets.GITHUB_TOKEN}} or {{github.token}}. Can be passed in the with for an action, or in a env in a step. It's more secure to use this token instead of a fine-graned or classic PAT, because it expires.
+
+[how to use the GITHUB_TOKEN to authenticate on behalf of GitHub Actions.](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token#permissions-for-the-github_token)
 
 ```
 
@@ -60,6 +102,32 @@ github.com
 - [ ] **Diagnose failed workflow runs using logs and run history** (Check red ❌ status, "Annotations" tab, or `gh run view --log`)
 - [ ] **Expand and interpret YAML anchors, aliases, and merged mappings when analyzing workflow configuration** (`&anchor_name`, `*alias_reference`, `<<: *merge_map`)
 - [ ] **Interpret matrix expansions, correlate job names to matrix axes, analyze failures across variants, and selectively rerun individual matrix jobs** (UI: "Jobs" sidebar list; "Re-run failed jobs" button)
+
+> Beyond running workflows on feature branches, here are key tasks where the CLI outperforms or provides unique access compared to the Web UI:
+
+> * Watching Live Logs: You can use gh run watch to stream live logs directly to your terminal as a job executes. In the Web UI, you are stuck with the browser's refresh rate and interface.
+
+> * Bulk Secret Management: You can set secrets from a file or local environment variable using gh secret set -f .env. Doing this in the Web UI requires manual entry for every single secret.
+
+> * API Prototyping: The gh api command allows you to interact with any GitHub endpoint—including experimental ones—without writing a full script or using a tool like Postman.
+
+> * Local Repository Setup: You can create a remote repository and push your local code in one command with gh repo create --source=. --push. The Web UI requires you to create the repo first, then manually run the git remote add commands.
+
+> * Workflow Performance Data: Use gh run view --json to get a machine-readable summary of job duration and success rates. This is much harder to aggregate manually via the UI.
+
+
+
+
+### GitHub CLI vs. Web UI: The Admin Cheat Sheet
+
+| Feature | GitHub CLI (`gh`) | Web UI (Browser) |
+| :--- | :--- | :--- |
+| **Workflow Dispatch** | Defaults to your **current local branch** automatically. | Requires manual selection from a dropdown menu. |
+| **Log Monitoring** | `gh run watch` streams live interactive logs to your terminal. | Static page that requires browser refreshes or waiting for the UI to update. |
+| **Secret Management** | `gh secret set -f .env` allows for **bulk uploads** from files. | Requires manual "New Secret" entry for every individual key-value pair. |
+| **Repo Creation** | One command to create remote, add origin, and push: `gh repo create --push`. | Multi-step process involving browser clicks and manual `git` commands in the terminal. |
+| **Auth Verification** | `gh auth status` instantly lists your token's active scopes and permissions. | Requires navigating through several layers of Personal Settings to find the PAT. |
+| **Error Handling** | Provides machine-readable JSON output for scripting (`--json`). | Visual-only; requires manual copying/pasting for documentation or scripts. |
 
 ### Access workflow artifacts and logs
 - [ ] **Locate workflows, logs, and artifacts in the UI and via API** (`GET /repos/{owner}/{repo}/actions/runs`, `gh run list`)
