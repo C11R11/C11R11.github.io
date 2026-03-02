@@ -28,13 +28,15 @@
 
 GitHub uses a five-field format (UTC time) to schedule workflows.
 
-`┌───────────── minute (0 - 59)`
-`│ ┌─────────── hour (0 - 23)`
-`│ │ ┌───────── day of the month (1 - 31)`
-`│ │ │ ┌─────── month (1 - 12 or JAN-DEC)`
-`│ │ │ │ ┌───── day of the week (0 - 6 or SUN-SAT)`
-`│ │ │ │ │`
-`* * * * *`
+```text
+┌───────────── minute (0 - 59)
+│ ┌─────────── hour (0 - 23)
+│ │ ┌───────── day of the month (1 - 31)
+│ │ │ ┌─────── month (1 - 12 or JAN-DEC)
+│ │ │ │ ┌───── day of the week (0 - 6 or SUN-SAT)
+│ │ │ │ │
+* * * * *
+```
 
 | Frequency | Cron Expression | Notes |
 | :--- | :--- | :--- |
@@ -67,7 +69,7 @@ github.com
   - Git operations protocol: https
   - Token: gho_************************************
   - Token scopes: 'gist', 'read:org', 'repo', 'workflow'
-
+```
 
 - [ ] **Define and validate workflow_dispatch inputs (types, required, defaults) and pass inputs to reusable workflows via workflow_call with inputs and secrets mapping** (`inputs: name: type: string, default: 'val'`, `with: arg: ${{ inputs.name }}`, `secrets: inherit`)
 
@@ -75,18 +77,42 @@ github.com
 
 [how to use the GITHUB_TOKEN to authenticate on behalf of GitHub Actions.](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token#permissions-for-the-github_token)
 
-```
-
 ### Design and implement workflow structure
 - [ ] **Use jobs, steps, and conditional logic** (`jobs:`, `steps:`, `if: github.event_name == 'push'`)
+
 - [ ] **Implement dependencies between jobs** (`needs: [job_a, job_b]`)
+
 - [ ] **Use workflow commands and environment variables** (`echo "VAR=VAL" >> $GITHUB_ENV`, `::error::message`)
+
 - [ ] **Use service containers (services:) for dependent services (databases, queues); configure ports, health checks, and container options** (`services: redis: image: redis`, `ports: ["6379:6379"]`, `options: "--health-cmd ..."`)
+
 - [ ] **Use strategy and matrix to generate job variations (OS, language/runtime versions); apply include/exclude; control fail-fast and max-parallel; optimize matrix size for cost and performance; account for runner image changes (Ubuntu 20.04 deprecation, Windows Server 2025 migration for windows-latest)** (`strategy: matrix: node: [18, 20]`, `include:`, `exclude:`, `fail-fast: false`, `runs-on: windows-2025`)
+
 - [ ] **Implement YAML anchors and aliases (&, * and merge <<) to reuse repeated mappings/steps within a single workflow file** (`env: &defaults`, `env: *defaults`, `<<: *defaults`)
+
 - [ ] **Use predefined contexts (github, runner, env, vars, secrets, inputs, matrix, needs, strategy, job, steps, github.event, github.ref) to access workflow, repository, and runtime metadata; understand immutable actions behavior and version pinning requirements** (`${{ github.sha }}`, `${{ secrets.KEY }}`, `uses: actions/checkout@v4` vs `@SHA`)
+
 - [ ] **Evaluate expressions with ${{ }} referencing contexts; distinguish static (workflow parse) vs runtime evaluation; prevent secret leakage in logs and expressions** (`if: ${{ github.event_name == 'push' }}`, `env: PASSWORD: ${{ secrets.PW }}`)
+
 - [ ] **Leverage editor tooling (GitHub Actions VS Code extension / YAML schema completion, metadata IntelliSense, validation) to author and maintain workflows efficiently** (Action/YAML linting extension in VS Code)
+
+🌐 GitHub Actions Contexts Quick Reference
+
+| Context | Purpose | Common Properties |
+| :--- | :--- | :--- |
+| **`github`** | Information about the workflow run and the event that triggered it. | `github.ref`, `github.repository`, `github.actor`, `github.event` |
+| **`env`** | Variables defined at the workflow, job, or step level using the `env:` key. | `env.MY_VAR` |
+| **`vars`** | Configuration variables defined at the Org, Repo, or Environment level. | `vars.API_URL`, `vars.PORT` |
+| **`secrets`** | Sensitive data (tokens, passwords) defined in GitHub Settings. | `secrets.GITHUB_TOKEN`, `secrets.DB_PASSWORD` |
+| **`inputs`** | Data passed to a `workflow_dispatch` or `workflow_call` event. | `inputs.deploy_target`, `inputs.debug_mode` |
+| **`matrix`** | The current job's specific combination of variables in a matrix strategy. | `matrix.os`, `matrix.node-version` |
+| **`needs`** | Outputs and status from jobs that this job depends on (via `needs:`). | `needs.build.outputs.version`, `needs.build.result` |
+| **`runner`** | Information about the machine executing the current job. | `runner.os`, `runner.temp`, `runner.tool_cache` |
+| **`job`** | Metadata about the current job being executed. | `job.status`, `job.container.id` |
+| **`steps`** | Status and outputs from steps already executed in the current job. | `steps.step_id.outputs.my_output`, `steps.step_id.outcome` |
+| **`strategy`** | Information about the matrix execution strategy. | `strategy.job-index`, `strategy.job-total` |
+
+(Contexts reference)[https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#available-contexts]
 
 ### Manage workflow execution and outputs
 - [ ] **Configure caching and artifact management; apply retention policies via REST APIs (logs, artifacts, workflow runs) at org/repo level** (`uses: actions/cache@v4`, `uses: actions/upload-artifact@v4`, `retention-days: 30`)
