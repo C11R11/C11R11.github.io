@@ -3,7 +3,9 @@
 ## 1. Author and Manage Workflows (20–25%)
 
 ### Configure workflow triggers and events
-- [ ] **Configure workflows to run for scheduled, manual, webhook, and repository events** (`on: schedule: - cron:`, `on: workflow_dispatch:`, `on: push:`, `on: pull_request:`)
+- [x] **Configure workflows to run for scheduled, manual, webhook, and repository events** (`on: schedule: - cron:`, `on: workflow_dispatch:`, `on: push:`, `on: pull_request:`)
+
+[events that triggered workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
 
 > The exam will test your ability to choose the right trigger for the right scenario: 
 > * Scheduled (schedule): Best for nightly builds or security scans (uses cron syntax).
@@ -16,7 +18,7 @@
 > * If a question asks if a cron job is "real-time precise," the answer is no.
 > * Default Branch Requirement: Similar to webhooks, the workflow file must exist on the default branch (usually main) for the schedule to trigger.
 
-- [ ] **Choose appropriate scope, permissions, and events for workflow automation** (`permissions: contents: read`, `pull_request` vs `pull_request_target`)
+- [x] **Choose appropriate scope, permissions, and events for workflow automation** (`permissions: contents: read`, `pull_request` vs `pull_request_target`)
 
 > The GITHUB_TOKEN permissions can be changes to be more restrictive by an admin
 
@@ -78,11 +80,27 @@ github.com
 [how to use the GITHUB_TOKEN to authenticate on behalf of GitHub Actions.](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token#permissions-for-the-github_token)
 
 ### Design and implement workflow structure
-- [ ] **Use jobs, steps, and conditional logic** (`jobs:`, `steps:`, `if: github.event_name == 'push'`)
+- [x] **Use jobs, steps, and conditional logic** (`jobs:`, `steps:`, `if: github.event_name == 'push'`)
 
-- [ ] **Implement dependencies between jobs** (`needs: [job_a, job_b]`)
+- [x] **Implement dependencies between jobs** (`needs: [job_a, job_b]`)
 
-- [ ] **Use workflow commands and environment variables** (`echo "VAR=VAL" >> $GITHUB_ENV`, `::error::message`)
+- [x] **Use workflow commands and environment variables** (`echo "VAR=VAL" >> $GITHUB_ENV`, `::error::message`)
+
+> env variables can be accessed like a context value with ${{ env.PROPERTY }}. The context will be interpolated and replaced by a string before the job is sent to a runner. This can be used in a bash script or command. 
+
+> THE UPDATED VALUE CANNOT BE SEEN BY ANOTHER JOB, ONLY THE JOB THAT DID THE ENV MODIFICATION.
+
+> However, you cannot use runner environment variables in parts of a workflow that are processed by GitHub Actions and are not sent to the runner. Instead, you must use contexts.
+
+```sh
+The run: echo "TODAY=$(date +%Y-%m-%d)" >> $GITHUB_ENV generates a new or update a environment variable, and this can be used on all the job
+```
+
+[Variables reference](https://docs.github.com/en/actions/reference/workflows-and-actions/variables)
+[About workflow commands](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#about-workflow-commands)
+[Setting an error message](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message)
+[About workflow commands](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands)
+[Environment files](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#environment-files)
 
 - [ ] **Use service containers (services:) for dependent services (databases, queues); configure ports, health checks, and container options** (`services: redis: image: redis`, `ports: ["6379:6379"]`, `options: "--health-cmd ..."`)
 
@@ -112,7 +130,24 @@ github.com
 | **`steps`** | Status and outputs from steps already executed in the current job. | `steps.step_id.outputs.my_output`, `steps.step_id.outcome` |
 | **`strategy`** | Information about the matrix execution strategy. | `strategy.job-index`, `strategy.job-total` |
 
-(Contexts reference)[https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#available-contexts]
+**Github Context**
+
+[Contexts reference](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#available-contexts)
+
+[github context](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#github-context)
+
+[events that triggered workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
+
+```text
+# Quick info
+github.ref -> branch (refs/heads/main)
+github.repository -> the owner/repo (cert-labs-hq/automations-repo)
+github.action -> the user who triggers the workflow (if it's a re-run the github.triggerent_action may be different)
+github.event_name -> The name of the event that triggered the workflow run. (workflow_dispatch)
+github.event -> The full event webhook payload.
+github.event.workflow -> the workflow yml path (.github/workflows/test-version.yml)
+github.workflow_ref -> full workflow path (cert-labs-hq/automations-repo/.github/workflows/test-version.yml@refs/heads/main)
+```
 
 ### Manage workflow execution and outputs
 - [ ] **Configure caching and artifact management; apply retention policies via REST APIs (logs, artifacts, workflow runs) at org/repo level** (`uses: actions/cache@v4`, `uses: actions/upload-artifact@v4`, `retention-days: 30`)
@@ -140,9 +175,6 @@ github.com
 > * Local Repository Setup: You can create a remote repository and push your local code in one command with gh repo create --source=. --push. The Web UI requires you to create the repo first, then manually run the git remote add commands.
 
 > * Workflow Performance Data: Use gh run view --json to get a machine-readable summary of job duration and success rates. This is much harder to aggregate manually via the UI.
-
-
-
 
 ### GitHub CLI vs. Web UI: The Admin Cheat Sheet
 
