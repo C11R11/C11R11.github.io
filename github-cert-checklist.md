@@ -73,7 +73,11 @@ github.com
   - Token scopes: 'gist', 'read:org', 'repo', 'workflow'
 ```
 
-- [ ] **Define and validate workflow_dispatch inputs (types, required, defaults) and pass inputs to reusable workflows via workflow_call with inputs and secrets mapping** (`inputs: name: type: string, default: 'val'`, `with: arg: ${{ inputs.name }}`, `secrets: inherit`)
+- [?] **Define and validate workflow_dispatch inputs (types, required, defaults) and pass inputs to reusable workflows via workflow_call with inputs and secrets mapping** (`inputs: name: type: string, default: 'val'`, `with: arg: ${{ inputs.name }}`, `secrets: inherit`)
+
+**PRUEBAS DE INHERIT**
+* NUEVO REPO EXTERNO A ORGANIZACIÓN
+* NUEVO REPO EN LA ORGANIZACIÓN
 
 > GITHUB_TOKEN: Github token created automatically for be used on a workflow run. The token is only for the repo that contains the workflow, and expires when the workflows ends. Can be called with {{secrets.GITHUB_TOKEN}} or {{github.token}}. Can be passed in the with for an action, or in a env in a step. It's more secure to use this token instead of a fine-graned or classic PAT, because it expires.
 
@@ -102,7 +106,45 @@ The run: echo "TODAY=$(date +%Y-%m-%d)" >> $GITHUB_ENV generates a new or update
 [About workflow commands](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands)
 [Environment files](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#environment-files)
 
-- [ ] **Use service containers (services:) for dependent services (databases, queues); configure ports, health checks, and container options** (`services: redis: image: redis`, `ports: ["6379:6379"]`, `options: "--health-cmd ..."`)
+- [x] **Use service containers (services:) for dependent services (databases, queues); configure ports, health checks, and container options** (`services: redis: image: redis`, `ports: ["6379:6379"]`, `options: "--health-cmd ..."`)
+
+> Container services are for a single job (fresh container for job and then gets eliminated when the job ends).
+> Every job must define their own service 
+
+| Feature      | Job Container (`container:`)                                  | Service Container (`services:`)                                      |
+|--------------|---------------------------------------------------------------|-----------------------------------------------------------------------|
+| Role         | The "Home" where your steps execute.                         | The "Sidecar" that provides a dependency (DB, Cache).                |
+| Usage        | Replaces the runner's default OS environment.                | Runs alongside your code in a shared network.                        |
+| Networking   | Steps run inside this container.                             | Steps talk to it via a hostname (the service label).                 |
+
+```sh
+jobs:
+  test-database:
+    runs-on: ubuntu-latest
+    # This job runs inside a Node container
+    container: node:20 
+    
+    # These services are sidecars to the job
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+      redis:
+        image: redis
+
+    steps:
+      - name: Check Connectivity
+        # Because we are in a 'job container', we use the service label as the host
+        run: |
+          ping -c 1 postgres
+          ping -c 1 redis
+```
+
+| If your Job uses...        | Access Service via... | Do you need `ports:`? | Why? | Key Exam Memory Trigger |
+|----------------------------|-----------------------|------------------------|------|--------------------------|
+| runs-on: ubuntu-latest     | localhost:<port>      | ✅ Yes                 | The runner maps the service container port to the host’s loopback interface. | No job container → you must expose ports to reach the service. |
+| container: node:20         | <service_label>:<port>| ❌ No                  | Both containers are on the same user-defined Docker bridge network; DNS resolves the service label automatically. | Job container + service container → same Docker network → use label as hostname. |
 
 - [ ] **Use strategy and matrix to generate job variations (OS, language/runtime versions); apply include/exclude; control fail-fast and max-parallel; optimize matrix size for cost and performance; account for runner image changes (Ubuntu 20.04 deprecation, Windows Server 2025 migration for windows-latest)** (`strategy: matrix: node: [18, 20]`, `include:`, `exclude:`, `fail-fast: false`, `runs-on: windows-2025`)
 
