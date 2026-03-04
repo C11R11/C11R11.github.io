@@ -26,6 +26,11 @@
 
 > If you move your workflow to a different organization that has the "Restricted" default, your workflow will break unless you have explicitly requested the permissions it needs.
 
+>GITHUB_TOKEN permissions can only be the same or more restrictive in nested workflows. For example, in the workflow chain A > B > C, if workflow A has package: read token permission, then B and C cannot have package: write permission. For more information, see Use GITHUB_TOKEN for authentication in workflows.
+
+> When a reusable workflow is triggered by a caller workflow, the github context is always associated with the caller workflow. The called workflow is automatically granted access to github.token and secrets.GITHUB_TOKEN. For more information about the github context, see
+
+
 ### GitHub Actions Cron Syntax: The Schedule Cheat Sheet
 
 GitHub uses a five-field format (UTC time) to schedule workflows.
@@ -74,6 +79,15 @@ github.com
 ```
 
 - [?] **Define and validate workflow_dispatch inputs (types, required, defaults) and pass inputs to reusable workflows via workflow_call with inputs and secrets mapping** (`inputs: name: type: string, default: 'val'`, `with: arg: ${{ inputs.name }}`, `secrets: inherit`)
+
+
+| Host Repository Visibility | Accessibility Criteria |
+| :--- | :--- |
+| **Same Repository** | Accessible by default. |
+| **Public** | Accessible if the enterprise allows the use of public reusable workflows. |
+| **Internal** | Accessible if repository settings are configured to allow enterprise sharing. |
+| **Private** | Accessible if repository settings are configured to allow specific access. |
+
 
 **PRUEBAS DE INHERIT**
 * NUEVO REPO EXTERNO A ORGANIZACIÓN
@@ -146,11 +160,51 @@ jobs:
 | runs-on: ubuntu-latest     | localhost:<port>      | ✅ Yes                 | The runner maps the service container port to the host’s loopback interface. | No job container → you must expose ports to reach the service. |
 | container: node:20         | <service_label>:<port>| ❌ No                  | Both containers are on the same user-defined Docker bridge network; DNS resolves the service label automatically. | Job container + service container → same Docker network → use label as hostname. |
 
+- [x] **Implement YAML anchors and aliases (&, * and merge <<) to reuse repeated mappings/steps within a single workflow file** (`env: &defaults`, `env: *defaults`, `<<: *defaults`)
+
+> You can use YAML anchors and aliases to reduce repetition in your workflows. An anchor (marked with &) identifies a piece of content that you want to reuse, while an alias (marked with *) repeats that content in another location.
+
+### 🔄 Reusability: Anchors vs. Composite Actions
+
+| Capability | YAML Anchors | Composite Actions |
+| :--- | :--- | :--- |
+| **Portability** | Internal to one `.yml` file only. | Can be stored in a central repo and used by many. |
+| **Flexibility** | Static; cannot change based on context. | Dynamic; uses `inputs` to change behavior. |
+| **Step Injection** | ❌ Cannot add extra steps to an anchored list. | ✅ Can be used alongside other steps in a job. |
+| **Secret Access** | Direct (since it's in the same file). | Must be passed explicitly via `inputs`. |
+
+#### 💡 When to use which?
+- Use **Anchors** when you have 5 jobs in ONE file that all use the exact same `env` or `strategy.matrix`.
+- Use **Composite Actions** when you want to standardize a "Build and Lint" process for every repo in your Organization.
+
 - [ ] **Use strategy and matrix to generate job variations (OS, language/runtime versions); apply include/exclude; control fail-fast and max-parallel; optimize matrix size for cost and performance; account for runner image changes (Ubuntu 20.04 deprecation, Windows Server 2025 migration for windows-latest)** (`strategy: matrix: node: [18, 20]`, `include:`, `exclude:`, `fail-fast: false`, `runs-on: windows-2025`)
 
-- [ ] **Implement YAML anchors and aliases (&, * and merge <<) to reuse repeated mappings/steps within a single workflow file** (`env: &defaults`, `env: *defaults`, `<<: *defaults`)
+- [x] **Use predefined contexts (github, runner, env, vars, secrets, inputs, matrix, needs, strategy, job, steps, github.event, github.ref) to access workflow, repository, and runtime metadata; understand immutable actions behavior and version pinning requirements** (`${{ github.sha }}`, `${{ secrets.KEY }}`, `uses: actions/checkout@v4` vs `@SHA`)
 
-- [ ] **Use predefined contexts (github, runner, env, vars, secrets, inputs, matrix, needs, strategy, job, steps, github.event, github.ref) to access workflow, repository, and runtime metadata; understand immutable actions behavior and version pinning requirements** (`${{ github.sha }}`, `${{ secrets.KEY }}`, `uses: actions/checkout@v4` vs `@SHA`)
+### 🔑 Metadata Access & Version Pinning
+
+#### 1. Immutable Actions & Versioning
+The exam will test your understanding of "Risk vs. Stability" regarding how you call actions.
+
+| Versioning Method | Syntax | Risk Level | Why? |
+| :--- | :--- | :--- | :--- |
+| **Commit SHA** | `@a456...` | **Safest** | Immutable. Prevents "supply chain attacks" if a tag is moved. |
+| **Full Tag** | `@v4.1.1` | **Stable** | Refers to a specific release, but tags *can* be deleted/moved. |
+| **Major Tag** | `@v4` | **Standard** | Gets bug fixes automatically, but risk of breaking changes. |
+| **Branch Name** | `@main` | **Unsafe** | Code can change at any second; builds will be inconsistent. |
+
+#### 2. Predefined Contexts Essentials
+
+- **`${{ github.sha }}`**: The specific commit ID that triggered the workflow. Use this for unique image tagging.
+- **`${{ github.ref }}`**: The branch or tag that triggered the run (e.g., `refs/heads/main`).
+- **`${{ secrets.GITHUB_TOKEN }}`**: Automatically generated for every job. It expires when the job finishes.
+- **`${{ runner.temp }}`**: A temporary directory on the runner that is cleaned up after every job.
+
+> If a question asks how to **strictly** meet security compliance for a regulated industry (like Banking), the answer is always **Pin actions to a full SHA**. GitHub recommends using the SHA and adding a comment with the version number for readability:
+
+> Pinning an action to a full-length commit SHA is currently the only way to use an action as an immutable release. Pinning to a particular SHA helps mitigate the risk of a bad actor adding a backdoor to the action's repository, as they would need to generate a SHA-1 collision for a valid Git object payload. When selecting a SHA, you should verify it is from the action's repository and not a repository fork.
+
+> To force to pin action to a commit SHA is on Organization->Actions->General-> Require actions to be pinned to a full-length commit SHA
 
 - [ ] **Evaluate expressions with ${{ }} referencing contexts; distinguish static (workflow parse) vs runtime evaluation; prevent secret leakage in logs and expressions** (`if: ${{ github.event_name == 'push' }}`, `env: PASSWORD: ${{ secrets.PW }}`)
 
@@ -237,6 +291,9 @@ github.workflow_ref -> full workflow path (cert-labs-hq/automations-repo/.github
 - [ ] **Consume organization-level and reusable workflows** (`uses: <org>/<repo>/.github/workflows/<file>.yml@<ref>`)
 - [ ] **Consume non-public organization workflow templates** (Settings -> Actions -> General -> "Allow all actions and reusable workflows")
 - [ ] **Use starter workflows (public and private/non-public templates); customize and adapt; distinguish from reusable workflows and composite actions** (`.github/workflow-templates/*.yml` in the `.github` repo)
+
+(Workflow templates reference)[https://docs.github.com/en/enterprise-cloud@latest/actions/reference/workflows-and-actions/reusing-workflow-configurations#workflow-templates]
+
 - [ ] **Differentiate starter workflows (copy scaffold, independent after creation) vs reusable workflows (central versioned definition invoked via workflow_call) vs composite actions (encapsulated step logic)** (Copy/Paste UI gallery vs `workflow_call` vs `runs: using: 'composite'`)
 - [ ] **Contrast disabling and deleting workflows** (Actions -> "..." menu -> "Disable workflow" vs "Delete workflow run")
 
