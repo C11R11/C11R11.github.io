@@ -195,6 +195,13 @@ The `strategy` block allows you to run a single job definition across multiple v
 | **`include`** | Adds specific combinations or extra variables to a matrix. | Can add a unique variable (like a specific `flag`) to just one row. |
 | **`exclude`** | Removes specific combinations from the matrix. | Essential for removing unsupported versions (e.g., Node 20 on Windows 2019). |
 
+| Feature | Syntax | Impact |
+| :--- | :--- | :--- |
+| **Expansion** | `matrix: { os: [A, B], node: [1, 2] }` | Creates 4 jobs (Ax1, Ax2, Bx1, Bx2). |
+| **Include** | `include: [{ os: A, flag: '--fast' }]` | Adds `matrix.flag` ONLY to Ax1 and Ax2. |
+| **Exclude** | `exclude: [{ os: B, node: 1 }]` | Removes the Bx1 job from the run. |
+| **Fail-Fast** | `fail-fast: false` | Forces all 4 jobs to finish even if 3 fail. |
+
 ---
 
 > The matrix context is only available inside a job that has a strategy: matrix: defined. You cannot use ${{ matrix.anything }} in a different job unless that job also has its own matrix.
@@ -250,7 +257,48 @@ The exam will test your understanding of "Risk vs. Stability" regarding how you 
 
 > To force to pin action to a commit SHA is on Organization->Actions->General-> Require actions to be pinned to a full-length commit SHA
 
-- [ ] **Evaluate expressions with ${{ }} referencing contexts; distinguish static (workflow parse) vs runtime evaluation; prevent secret leakage in logs and expressions** (`if: ${{ github.event_name == 'push' }}`, `env: PASSWORD: ${{ secrets.PW }}`)
+- [x] **Evaluate expressions with ${{ }} referencing contexts; distinguish static (workflow parse) vs runtime evaluation; prevent secret leakage in logs and expressions** (`if: ${{ github.event_name == 'push' }}`, `env: PASSWORD: ${{ secrets.PW }}`)
+
+[Syntax reference](https://docs.github.com/en/actions/learn-github-actions/expressions)
+[Context Availability](ttps://docs.github.com/en/actions/learn-github-actions/contexts%23context-availability)
+[Security Hardening (Secrets)](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions%23using-secrets)
+
+#### 1. Static vs. Runtime Evaluation
+Understanding *when* an expression is evaluated is a common GH-200 trick.
+
+| Type | When it Happens | Where it's Used | Example |
+| :--- | :--- | :--- | :--- |
+| **Static (Parse-time)** | Before the job starts, by GitHub's central server. | `if:`, `strategy:`, `concurrency:`, `env:` (job/wf level). | `${{ github.event_name == 'push' }}` |
+| **Runtime** | While the script is running inside the runner's shell. | Inside `run:` scripts or shell environment. | `$MY_ENV_VAR` or `${{ steps.id.outputs.val }}` |
+
+**⚠️ The Golden Rule:** Use `${{ }}` for GitHub-level logic (skipping jobs/steps). Use shell variables (like `$VAR`) for script-level logic.
+
+---
+
+#### 2. Expression Rules
+- **Case Insensitivity**: Context keys are case-insensitive (e.g., `GITHUB.REF` == `github.ref`).
+- **Implicit Strings**: Inside `if:` blocks, you don't *need* the `${{ }}` wrapper, but it is best practice to include it for consistency.
+- **Short-Circuiting**: `(false && github.sha)` will stop at `false` and never evaluate the second half.
+
+---
+
+#### 3. Preventing Secret Leakage
+GitHub masks secrets in the logs, but it isn't foolproof.
+
+| Risk | Mitigation Strategy |
+| :--- | :--- |
+| **Log Leak** | **NEVER** `echo` a secret directly. Use it as an environment variable instead: `env: KEY: ${{ secrets.KEY }}`. |
+| **Masking Bypass** | Base64 encoding or JSON-structured secrets often bypass the "Exact Match" masker. **Don't store JSON blobs as secrets**. |
+| **Dynamic Masks** | If you generate a sensitive value during a run, use the workflow command: `echo "::add-mask::$VALUE"`. |
+| **Context Leaks** | Avoid dumping the entire `github` context (e.g., `toJson(github)`) if your event payload might contain tokens or emails. |
+
+---
+
+#### 🎓 GH-200 Exam Scenarios
+* **Scenario:** "A job should only run on the main branch for pushes."
+  * **Answer:** `if: github.event_name == 'push' && github.ref == 'refs/heads/main'`.
+* **Scenario:** "How do you ensure a dynamic API token generated in Step 1 is hidden in logs for Step 2?"
+  * **Answer:** Use `::add-mask::` on the token in Step 1.
 
 - [ ] **Leverage editor tooling (GitHub Actions VS Code extension / YAML schema completion, metadata IntelliSense, validation) to author and maintain workflows efficiently** (Action/YAML linting extension in VS Code)
 
