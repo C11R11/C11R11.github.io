@@ -292,6 +292,30 @@ GitHub masks secrets in the logs, but it isn't foolproof.
 | **Dynamic Masks** | If you generate a sensitive value during a run, use the workflow command: `echo "::add-mask::$VALUE"`. |
 | **Context Leaks** | Avoid dumping the entire `github` context (e.g., `toJson(github)`) if your event payload might contain tokens or emails. |
 
+## 🛡️ GitHub Actions: Secret Security & Masking Cheat Sheet
+
+| Risk Category | How it Leaks | Mitigation Strategy (Best Practice) |
+| :--- | :--- | :--- |
+| **Direct Logging** | Using `echo ${{ secrets.PWD }}` in a run script. | **NEVER** echo secrets. Map them to Environment Variables (`env:`) instead. |
+| **Transformations** | Base64, Hex, or URL encoding the secret. | The masker only detects **exact matches**. Avoid encoding secrets in logs. |
+| **Short Secrets** | Using common words (e.g., `test`) as a secret. | Use high-entropy strings (minimum 16+ characters). |
+| **Generated Values** | Creating a dynamic token (e.g., AWS STS) during a run. | Use the workflow command: `echo "::add-mask::$VALUE"`. |
+| **Structured Data** | Storing a JSON blob as a single secret. | Store values as individual secrets; parsing JSON risks exposing partial strings. |
+| **Verbose Tools** | Using `curl -v` or `--debug` flags in CLI tools. | Disable debug mode in production to prevent header/payload leaks. |
+
+---
+
+### 🧠 Key Concepts for GH-200 (Domain 5.1)
+
+#### 1. The Masking Rule
+GitHub replaces any secret referenced in the workflow with `***` in the logs. This is a **pattern-matching filter**, not a security sandbox.
+
+#### 2. Manual Masking (`add-mask`)
+When your script generates a sensitive value at runtime, you must register it with the masker so subsequent steps don't leak it:
+```bash
+# Registering a dynamic variable for masking
+echo "::add-mask::$DYNAMIC_TOKEN"
+
 ---
 
 #### 🎓 GH-200 Exam Scenarios
