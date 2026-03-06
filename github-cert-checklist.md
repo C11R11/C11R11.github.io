@@ -257,6 +257,8 @@ The exam will test your understanding of "Risk vs. Stability" regarding how you 
 
 > To force to pin action to a commit SHA is on Organization->Actions->General-> Require actions to be pinned to a full-length commit SHA
 
+> Interestingly, even when "Require SHA pinning" is active, **reusable workflows** can often still be referenced by **tag**. This is because reusable workflows are typically internal and managed by your own organization, reducing the third-party risk.
+
 - [x] **Evaluate expressions with ${{ }} referencing contexts; distinguish static (workflow parse) vs runtime evaluation; prevent secret leakage in logs and expressions** (`if: ${{ github.event_name == 'push' }}`, `env: PASSWORD: ${{ secrets.PW }}`)
 
 [Syntax reference](https://docs.github.com/en/actions/learn-github-actions/expressions)
@@ -272,6 +274,8 @@ Understanding *when* an expression is evaluated is a common GH-200 trick.
 | **Runtime** | While the script is running inside the runner's shell. | Inside `run:` scripts or shell environment. | `$MY_ENV_VAR` or `${{ steps.id.outputs.val }}` |
 
 **⚠️ The Golden Rule:** Use `${{ }}` for GitHub-level logic (skipping jobs/steps). Use shell variables (like `$VAR`) for script-level logic.
+
+> The Rule: You can only use the github, inputs, vars (Configuration Variables), and matrix contexts in the with block of a uses statement.
 
 ---
 
@@ -413,6 +417,47 @@ github.workflow_ref -> full workflow path (cert-labs-hq/automations-repo/.github
 - [ ] **Differentiate starter workflows (copy scaffold, independent after creation) vs reusable workflows (central versioned definition invoked via workflow_call) vs composite actions (encapsulated step logic)** (Copy/Paste UI gallery vs `workflow_call` vs `runs: using: 'composite'`)
 - [ ] **Contrast disabling and deleting workflows** (Actions -> "..." menu -> "Disable workflow" vs "Delete workflow run")
 
+### 🔄 Reusable Workflow: Reference Guide
+
+| Reference Type | Syntax | Best Use Case |
+| :--- | :--- | :--- |
+| **Local (Relative)** | `uses: ./.github/workflows/file.yml` | Workflows in the **same repo**. Follows your current branch/commit automatically. |
+| **Remote (Tagged)** | `uses: org/repo/path@v1` | Centralized libraries. Ensures you use a **stable, versioned** release. |
+| **Remote (SHA)** | `uses: org/repo/path@sha123...` | **Maximum Security.** Prevents any changes to the called code. |
+
+## ⚖️ Composite Actions vs. Reusable Workflows
+
+While both promote the "DRY" (Don't Repeat Yourself) principle, they operate at different levels of the GitHub Actions hierarchy.
+
+| Feature | **Composite Action** (The "Step") | **Reusable Workflow** (The "Job") |
+| :--- | :--- | :--- |
+| **Hierarchy** | A collection of **steps**. | A collection of **jobs**. |
+| **Implementation** | Called inside a job's `steps:` list. | Called at the `jobs:` level. |
+| **Runner (`runs-on`)** | Uses the runner defined by the **caller**. | Defines its **own** runner independently. |
+| **UI Appearance** | All steps are grouped under one heading. | Appears as a distinct job in the workflow map. |
+| **Secrets** | Can access `secrets` directly (if in same repo). | Must be passed explicitly or via `secrets: inherit`. |
+| **Best For...** | Standardizing a specific "task" (e.g., Setup). | Standardizing a "pipeline" (e.g., Production Deploy). |
+
+### 🏛️ Standardized Workflow Architecture
+
+1. **DRY at the Root**: Use **Composite Actions** for low-level tasks (auth, tool installation, cleanup) to ensure you never write the same `run:` script twice.
+2. **Standardize the Job**: Wrap those actions in **Reusable Workflows** to define the "Company Way" of testing or deploying.
+3. **Version Everything**: Use semantic tags (e.g., `@v1`) for your library so you can push updates without breaking everyone's pipelines at once.
+4. **Abstract Complexity**: The goal is to make the developer's local workflow file as short as possible.
+
+### 🔄 Reusability: When to use what?
+
+| Use Case | Recommended Tool | Why? |
+| :--- | :--- | :--- |
+| **Standardizing a "Setup"** | **Composite Action** | Allows developers to add their own tests/steps after the setup. |
+| **Standardizing a "Deployment"** | **Reusable Workflow** | Ensures the entire job (including environment/concurrency) is locked down. |
+| **Complex Logic (if/else)** | **Reusable Workflow** | Supports job-level conditionals and multiple related jobs. |
+| **Speed/Simplicity** | **Composite Action** | Faster to implement; doesn't require separate job overhead. |
+
+#### 🎓 GH-200 Exam Tip
+If the question mentions **"Calling a workflow from another repository to standardize a whole CI/CD pipeline,"** the answer is **Reusable Workflow**. 
+If it mentions **"Bundling multiple run commands into a single step,"** the answer is **Composite Action**.
+
 ## 3. Author and maintain actions (15–20%)
 
 ### Create and troubleshoot custom actions
@@ -429,6 +474,36 @@ github.workflow_ref -> full workflow path (cert-labs-hq/automations-repo/.github
 - [ ] **Select distribution models (public, private, marketplace)** (Public repo for marketplace vs. Internal/Private repo for Org-only)
 - [ ] **Publish actions to the GitHub Marketplace** (`branding: icon: 'check-circle', color: 'blue'`)
 - [ ] **Apply versioning and release strategies** (`git tag -a v1.0.0`, `git tag -fa v1 -m "Update v1 tag"`)
+
+### 🏷️ How to Version your Actions/Workflows
+
+| Action | Command |
+| :--- | :--- |
+| **Create Tag** | `git tag -a v1 -m "Release v1"` |
+| **Push Tag** | `git push origin v1` |
+| **Update Tag** | `git tag -fa v1 -m "Update v1 to latest"; git push origin v1 --force` |
+| **Delete Tag** | `git tag -d v1; git push origin --delete v1` |
+
+### 🔄 Maintenance Strategy: Monorepo vs. Polyrepo
+
+| Feature | Monorepo (Standard) | Polyrepo (Granular) |
+| :--- | :--- | :--- |
+| **Versioning** | Single tag for all tools. | Unique tag per tool. |
+| **Maintenance** | Low (One repo to manage). | High (Many repos/permissions). |
+| **Dependency** | Easy to sync related tools. | Complex to sync across repos. |
+| **Use Case** | Internal platform teams. | Public/Open-source actions. |
+
+---
+
+### 🏷️ The "Moving Tag" Workflow (The GH-200 Way)
+
+To maintain a centralized `@v1` tag that always points to the latest stable release:
+
+1. **Tag the specific version:** `git tag v1.0.5`
+2. **Force-move the major tag:** `git tag -fa v1 -m "Moving v1 tag"`
+3. **Push to GitHub:** `git push origin v1 --force`
+
+*Note: This is why SHA pinning is safer for production; it protects against the DevOps team accidentally moving a tag to a broken version.*
 
 ## 4. Manage GitHub Actions for the enterprise (20–25%)
 
