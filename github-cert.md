@@ -3,7 +3,7 @@
 * [Github](cli-github.md) - Github
 * [Github actions](github-actions.md) - Github actions
 * [GH-200 checklist](github-cert-checklist.md) - GH-200: GitHub Actions Certification Checklist
-
+* [Semantic versioning](semantic-versioning)
 
 Este repositorio contiene ejercicios prácticos para cubrir los objetivos del examen oficial.
 

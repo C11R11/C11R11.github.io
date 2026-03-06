@@ -232,6 +232,42 @@ As a DevOps Engineer, you must track image deprecations to prevent "Pipeline Rot
 
 - [x] **Use predefined contexts (github, runner, env, vars, secrets, inputs, matrix, needs, strategy, job, steps, github.event, github.ref) to access workflow, repository, and runtime metadata; understand immutable actions behavior and version pinning requirements** (`${{ github.sha }}`, `${{ secrets.KEY }}`, `uses: actions/checkout@v4` vs `@SHA`)
 
+GitHub Actions Contexts Quick Reference
+
+| Context | Purpose | Common Properties |
+| :--- | :--- | :--- |
+| **`github`** | Information about the workflow run and the event that triggered it. | `github.ref`, `github.repository`, `github.actor`, `github.event` |
+| **`env`** | Variables defined at the workflow, job, or step level using the `env:` key. | `env.MY_VAR` |
+| **`vars`** | Configuration variables defined at the Org, Repo, or Environment level. | `vars.API_URL`, `vars.PORT` |
+| **`secrets`** | Sensitive data (tokens, passwords) defined in GitHub Settings. | `secrets.GITHUB_TOKEN`, `secrets.DB_PASSWORD` |
+| **`inputs`** | Data passed to a `workflow_dispatch` or `workflow_call` event. | `inputs.deploy_target`, `inputs.debug_mode` |
+| **`matrix`** | The current job's specific combination of variables in a matrix strategy. | `matrix.os`, `matrix.node-version` |
+| **`needs`** | Outputs and status from jobs that this job depends on (via `needs:`). | `needs.build.outputs.version`, `needs.build.result` |
+| **`runner`** | Information about the machine executing the current job. | `runner.os`, `runner.temp`, `runner.tool_cache` |
+| **`job`** | Metadata about the current job being executed. | `job.status`, `job.container.id` |
+| **`steps`** | Status and outputs from steps already executed in the current job. | `steps.step_id.outputs.my_output`, `steps.step_id.outcome` |
+| **`strategy`** | Information about the matrix execution strategy. | `strategy.job-index`, `strategy.job-total` |
+
+**Github Context**
+
+[Contexts reference](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#available-contexts)
+
+[github context](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#github-context)
+
+[events that triggered workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
+
+```text
+# Quick info
+github.ref -> branch (refs/heads/main)
+github.repository -> the owner/repo (cert-labs-hq/automations-repo)
+github.action -> the user who triggers the workflow (if it's a re-run the github.triggerent_action may be different)
+github.event_name -> The name of the event that triggered the workflow run. (workflow_dispatch)
+github.event -> The full event webhook payload.
+github.event.workflow -> the workflow yml path (.github/workflows/test-version.yml)
+github.workflow_ref -> full workflow path (cert-labs-hq/automations-repo/.github/workflows/test-version.yml@refs/heads/main)
+```
+
+
 ### 🔑 Metadata Access & Version Pinning
 
 #### 1. Immutable Actions & Versioning
@@ -319,6 +355,7 @@ When your script generates a sensitive value at runtime, you must register it wi
 ```bash
 # Registering a dynamic variable for masking
 echo "::add-mask::$DYNAMIC_TOKEN"
+```
 
 ---
 
@@ -328,42 +365,45 @@ echo "::add-mask::$DYNAMIC_TOKEN"
 * **Scenario:** "How do you ensure a dynamic API token generated in Step 1 is hidden in logs for Step 2?"
   * **Answer:** Use `::add-mask::` on the token in Step 1.
 
-- [ ] **Leverage editor tooling (GitHub Actions VS Code extension / YAML schema completion, metadata IntelliSense, validation) to author and maintain workflows efficiently** (Action/YAML linting extension in VS Code)
+- [x] **Leverage editor tooling (GitHub Actions VS Code extension / YAML schema completion, metadata IntelliSense, validation) to author and maintain workflows efficiently** (Action/YAML linting extension in VS Code)
 
-🌐 GitHub Actions Contexts Quick Reference
+# 🛠️ GitHub Actions: Editor Tooling & Validation
 
-| Context | Purpose | Common Properties |
-| :--- | :--- | :--- |
-| **`github`** | Information about the workflow run and the event that triggered it. | `github.ref`, `github.repository`, `github.actor`, `github.event` |
-| **`env`** | Variables defined at the workflow, job, or step level using the `env:` key. | `env.MY_VAR` |
-| **`vars`** | Configuration variables defined at the Org, Repo, or Environment level. | `vars.API_URL`, `vars.PORT` |
-| **`secrets`** | Sensitive data (tokens, passwords) defined in GitHub Settings. | `secrets.GITHUB_TOKEN`, `secrets.DB_PASSWORD` |
-| **`inputs`** | Data passed to a `workflow_dispatch` or `workflow_call` event. | `inputs.deploy_target`, `inputs.debug_mode` |
-| **`matrix`** | The current job's specific combination of variables in a matrix strategy. | `matrix.os`, `matrix.node-version` |
-| **`needs`** | Outputs and status from jobs that this job depends on (via `needs:`). | `needs.build.outputs.version`, `needs.build.result` |
-| **`runner`** | Information about the machine executing the current job. | `runner.os`, `runner.temp`, `runner.tool_cache` |
-| **`job`** | Metadata about the current job being executed. | `job.status`, `job.container.id` |
-| **`steps`** | Status and outputs from steps already executed in the current job. | `steps.step_id.outputs.my_output`, `steps.step_id.outcome` |
-| **`strategy`** | Information about the matrix execution strategy. | `strategy.job-index`, `strategy.job-total` |
+To author workflows efficiently, you must move from "Writing YAML" to "Developing Workflows." This requires three layers of tooling.
 
-**Github Context**
+## 1. The "Must-Have" VS Code Extension
+**Extension Name:** [GitHub Actions](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-github-actions) (by GitHub)
 
-[Contexts reference](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#available-contexts)
+### Key Features:
+* **IntelliSense:** Autocomplete for `runs-on`, `with`, `outputs`, and even context variables like `${{ github.event... }}`.
+* **Inline Documentation:** Hover over a keyword (like `strategy`) to see the official documentation and allowed values.
+* **Workflow Management:** Start, stop, and view logs for your actions directly inside VS Code without switching to the browser.
 
-[github context](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#github-context)
+---
 
-[events that triggered workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
+## 2. YAML Schema Validation
+GitHub Actions uses a specific **JSON Schema**. You can force VS Code to recognize your `.yml` files as GitHub Actions to get red squiggly lines when you make a syntax error.
 
-```text
-# Quick info
-github.ref -> branch (refs/heads/main)
-github.repository -> the owner/repo (cert-labs-hq/automations-repo)
-github.action -> the user who triggers the workflow (if it's a re-run the github.triggerent_action may be different)
-github.event_name -> The name of the event that triggered the workflow run. (workflow_dispatch)
-github.event -> The full event webhook payload.
-github.event.workflow -> the workflow yml path (.github/workflows/test-version.yml)
-github.workflow_ref -> full workflow path (cert-labs-hq/automations-repo/.github/workflows/test-version.yml@refs/heads/main)
+### Settings.json Configuration:
+```json
+"yaml.schemas": {
+  "[https://json.schemastore.org/github-workflow.json](https://json.schemastore.org/github-workflow.json)": ".github/workflows/*.{yml,yaml}",
+  "[https://json.schemastore.org/github-action.json](https://json.schemastore.org/github-action.json)": "**/action.{yml,yaml}"
+}
 ```
+### 3.- Actionlint
+
+Standard YAML linting only checks if the file is valid YAML. Actionlint checks if the logic is valid for GitHub Actions (e.g., "Does this secret exist?" or "Is this shell command valid?").
+
+* Installation: 
+```bash
+brew install actionlint
+```
+* Usage: Run actionlint in your terminal to catch errors like:
+* Invalid if expressions.
+* Missing shell: on custom steps.
+* Using ${{ }} inside a run: block incorrectly (Shell Injection risks)
+
 
 ### Manage workflow execution and outputs
 - [ ] **Configure caching and artifact management; apply retention policies via REST APIs (logs, artifacts, workflow runs) at org/repo level** (`uses: actions/cache@v4`, `uses: actions/upload-artifact@v4`, `retention-days: 30`)
