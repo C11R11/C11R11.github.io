@@ -88,6 +88,36 @@ github.com
 | **Internal** | Accessible if repository settings are configured to allow enterprise sharing. |
 | **Private** | Accessible if repository settings are configured to allow specific access. |
 
+# 🔐 GitHub Actions: Cross-Repo Secret & Tag Rules
+
+## 1. Secret Inheritance (`secrets: inherit`)
+* **Private/Internal Repos:** Works perfectly within the same Organization.
+* **Public Repos:** **Blocked.** You must pass secrets explicitly using the `secrets:` key in the caller workflow.
+* **Reason:** Prevents secret leakage via forks or malicious pull requests.
+
+## 2. Remote Tagging Checklist
+To call a workflow by tag (e.g., `@v1`), the following must be true:
+1. The repository is **Public** (or Private with "Access" enabled).
+2. The tag was pushed using `git push --tags`.
+3. The reference uses the full path: `owner/repo/.github/workflows/workflow.yml@v1`.
+
+## 🛠️ Best Practice for Public Libraries
+When building a public automation library:
+1. Keep the **Workflow** public.
+2. Keep the **Secrets** in the repository settings of the *Caller* repo.
+3. Use **Explicit Secrets** mapping in the YAML to maintain a clear security contract.
+
+### ⚠️ Reusable Workflow Access Matrix
+
+| Caller Repo | Called (Reusable) Repo | Result |
+| :--- | :--- | :--- |
+| **Public** | **Public** | ✅ Supported |
+| **Private** | **Private** | ✅ Supported (Requires Settings > Actions > Access) |
+| **Private** | **Public** | ✅ Supported |
+| **Public** | **Private** | ❌ **FAILED (HTTP 422)** |
+
+**Note:** For personal accounts/organizations on the Free tier, "Internal" visibility is not available. You only have Public or Private.
+
 
 **PRUEBAS DE INHERIT**
 * NUEVO REPO EXTERNO A ORGANIZACIÓN
@@ -569,6 +599,24 @@ To maintain a centralized `@v1` tag that always points to the latest stable rele
 - [ ] **Identify and use trustworthy actions from the Marketplace** (Look for the "Verified Creator" blue badge ✅)
 - [ ] **Mitigate script injection (sanitize/validate inputs, least-privilege permissions, avoid untrusted data in run:, proper shell quoting, prefer vetted actions over inline scripts)** (Use `env` variables for `${{ github.event... }}` instead of direct expansion in `run:`)
 - [ ] **Understand GITHUB_TOKEN lifecycle (ephemeral, scoped), configure granular permissions, contrast with PAT; restrict write scopes** (`permissions: contents: read`, `pull-requests: write`)
+
+# 🛡️ ShellCheck & GitHub Contexts
+
+When writing `run:` scripts, directly placing `${{ github.xxx }}` inside a shell script can cause linting errors (SC2193) and security vulnerabilities (Shell Injection).
+
+## ✅ The "Env Map" Pattern
+Always map the GitHub Context to an environment variable in the `env:` block of the step before using it in a `run:` script.
+
+**Why do this?**
+1. **Linting:** `actionlint` and `shellcheck` can now validate the shell logic properly.
+2. **Security:** It prevents attackers from injecting malicious code if the context variable contains special shell characters (like `;` or `&&`).
+3. **Readability:** Your shell script looks like a standard script.
+
+## 📋 Fixed Syntax Example
+```yaml
+- run: echo "User is $USER_NAME"
+  env:
+    USER_NAME: ${{ github.actor }}
 
 > * Token Scoping: Fine-grained PATs must have the Organization as the Resource Owner to modify Org repos; otherwise, you get the 403 you encountered.
 > * The "Metadata" Base: Every token needs at least metadata: read to even see a repository's exists via the API.
