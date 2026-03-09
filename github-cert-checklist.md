@@ -47,7 +47,7 @@
 - [ ] **Generate job summaries using GITHUB_STEP_SUMMARY for rich Markdown reports (test results, coverage, links)** (`echo "### Test Passed" >> $GITHUB_STEP_SUMMARY`)
 - [ ] **Add workflow status badges and environment protections** (`![Badge](https://github.com/...)`, `environment: production`)
 
-[]()
+[Data management](github-data-mng.md)
 
 ## 2. Consume and troubleshoot workflows (15–20%)
 
