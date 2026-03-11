@@ -38,5 +38,16 @@ git config --global user.email "email"
 # Emergency: The remote was erased and recreated but empty. I need to push my local repo
 git push --force-with-lease
 
+[Reference](https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History)
 
-```
+# List commit history
+git log --oneline 
+
+# List commits with full sha (Secure Hash Algorithm)
+git log --pretty=oneline
+
+# Get the SHA for a specific Tag
+git rev-parse v1.0.0
+
+# Get the latest commit SHA (Current Branch)
+git log -n 1 --pretty=format:"%H"

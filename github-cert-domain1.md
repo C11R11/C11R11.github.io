@@ -207,4 +207,86 @@ brew install actionlint
 * Usage: Run actionlint in your terminal to catch errors like:
 * Invalid if expressions.
 * Missing shell: on custom steps.
-* Using ${{ }} inside a run: block incorrectly (Shell Injection risks)
+* Using ${{ }} inside a run: block incorrectly (Shell Injection risks
+
+# 🗄️ Multi-Cache Coexistence
+
+When a new cache is generated, the old one isn't immediately deleted. They coexist until an eviction rule triggers.
+
+## 🕒 The Coexistence Period
+* **Why keep the old one?** If you switch back to the previous branch or revert the `package.json` change, GitHub will find the old cache immediately. This is "Zero-Latency Reverts."
+* **Cleanup:** GitHub handles the cleanup automatically. You don't need to manually delete the old cache unless you are hitting the 10GB repository limit.
+
+## 🏁 Race Conditions
+If two workflows run at the exact same time with the same new key:
+* The first one to finish "wins" and saves the cache.
+* The second one will simply fail to save (silently) because the key now exists. This prevents data corruption.
+
+# QUIZ
+
+1. You have a workflow that must only run after another specific workflow has successfully completed. Which trigger should you use?
+
+workflow run
+
+# 🔗 workflow_call vs. workflow_run
+
+While both connect two workflow files, they serve completely different architectural purposes.
+
+## 1. workflow_call (The "Reusable" Pattern)
+This is used for **templates**. You create a "standard" workflow once and call it from many different repositories or files.
+
+* **How it works:** The "Caller" (Parent) explicitly triggers the "Called" (Child) workflow.
+* **Context:** The Child runs as if it were part of the Parent. It shares the same `GITHUB_RUN_ID`.
+* **Use Case:** A standard "Security Scan" workflow that every team in the company must use.
+
+**Example (Child Workflow):**
+```yaml
+on:
+  workflow_call:
+    inputs:
+      username:
+        required: true
+        type: string
+```
+
+## 2.- workflow_run (The Reactive Trigger)
+
+The `workflow_run` trigger allows a workflow to execute based on the **completion** or **status** of a separate workflow file in the same repository.
+
+## ⚙️ How it works
+Unlike `workflow_call` (where the parent calls the child), `workflow_run` is a **downstream listener**. The "Child" workflow sits and waits for the "Parent" workflow to finish.
+
+### Basic Syntax
+```yaml
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"] # The 'name' field of the parent workflow
+    types:
+      - completed
+      - requested
+    branches:
+      - main
+      - 'releases/**'
+```
+
+
+2. You are implementing Infrastructure as Code with Terraform. You want to ensure that if a second 'Apply' workflow starts while one is already running, the new one is cancelled to avoid state locks. Which keyword should you use?
+
+concurrency
+
+## Concurrency: Preventing Overlaps
+Used to ensure only one run of a specific group executes at a time. Critical for deployments (e.g., Terraform, Database Migrations).
+
+```yaml
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true # Drops the old run if a new one starts
+```
+
+3. You need to run your test suite across three different versions of Node.js (18, 20, 22). What is the most efficient way to define this in Domain 1?
+
+Use a matrix strategy wihtin a single job
+
+4. A developer wants to trigger a workflow only when changes are made to the 'docs/' folder on the 'main' branch. How should the trigger be configured?
+
+on: push: branches: [main] paths['docs/**']

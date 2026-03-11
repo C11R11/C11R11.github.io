@@ -1,5 +1,7 @@
 [❤️‍🩹 Home](recuperacion.md)
 
+[¿Por Qué Te Duelen los Flexores de Cadera? Arréglalo Para Siempre](https://www.youtube.com/watch?v=HmhKVwTX5OQ)
+
 # FASE 2 — ACTIVACIÓN + CONTROL DINÁMICO  
 **Duración orientativa:** 3–4 semanas  
 **Objetivo:** consolidar activación glútea, mejorar control de rodilla y cadera, aumentar tolerancia a carga

@@ -32,3 +32,12 @@ export GITHUB_OWNER=<owner-here>
 # to be able to create teams with terraform, it's needed to add a nde
 # fine-grained token with Members permision (Organization members and teams)
 ```
+
+# List all caches for the current repo
+gh cache list
+
+# Delete a specific cache by ID
+gh cache delete <cache-id>
+
+# Delete all caches for a specific branch
+gh cache delete --branch main
