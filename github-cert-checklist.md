@@ -22,7 +22,7 @@
 
 - [x] **Use service containers (services:) for dependent services (databases, queues); configure ports, health checks, and container options** (`services: redis: image: redis`, `ports: ["6379:6379"]`, `options: "--health-cmd ..."`)
 
-[Job And Service containers](github-containers.md)
+[Workflow making notes](github-cert-domain1.md#github-containers-jobs-and-services)
 
 - [x] **Implement YAML anchors and aliases (&, * and merge <<) to reuse repeated mappings/steps within a single workflow file** (`env: &defaults`, `env: *defaults`, `<<: *defaults`)
 
@@ -30,11 +30,11 @@
 
 - [x] **Use strategy and matrix to generate job variations (OS, language/runtime versions); apply include/exclude; control fail-fast and max-parallel; optimize matrix size for cost and performance; account for runner image changes (Ubuntu 20.04 deprecation, Windows Server 2025 migration for windows-latest)** (`strategy: matrix: node: [18, 20]`, `include:`, `exclude:`, `fail-fast: false`, `runs-on: windows-2025`)
 
-[Github Matrix context](github-matrix.md)
+[Workflow making notes](github-cert-domain1.md#-github-actions-matrix-strategy-reference)
 
 - [x] **Evaluate expressions with ${{ }} referencing contexts; distinguish static (workflow parse) vs runtime evaluation; prevent secret leakage in logs and expressions** (`if: ${{ github.event_name == 'push' }}`, `env: PASSWORD: ${{ secrets.PW }}`)
 
-[Github Contexts](github-contexts.md)
+[Workflow making notes](github-cert-domain1.md#github-actions-contexts-quick-reference)
 [Workflow making notes](github-cert-domain1.md#expressions)
 
 - [x] **Leverage editor tooling (GitHub Actions VS Code extension / YAML schema completion, metadata IntelliSense, validation) to author and maintain workflows efficiently** (Action/YAML linting extension in VS Code)
@@ -47,6 +47,7 @@
 - [x] **Generate job summaries using GITHUB_STEP_SUMMARY for rich Markdown reports (test results, coverage, links)** (`echo "### Test Passed" >> $GITHUB_STEP_SUMMARY`)
 - [x] **Add workflow status badges and environment protections** (`![Badge](https://github.com/...)`, `environment: production`)
 
+[Workflow making notes](github-cert-domain1.md#-data-management-artifacts-vs-cache-vs-outputs)
 [Data management](github-data-mng.md)
 
 ## 2. Consume and troubleshoot workflows (15–20%)
@@ -75,22 +76,32 @@
 - [x] **Differentiate starter workflows (copy scaffold, independent after creation) vs reusable workflows (central versioned definition invoked via workflow_call) vs composite actions (encapsulated step logic)** (Copy/Paste UI gallery vs `workflow_call` vs `runs: using: 'composite'`)
 - [x] **Contrast disabling and deleting workflows** (Actions -> "..." menu -> "Disable workflow" vs "Delete workflow run")
 
+[Starter workflows](github-cert-domain2.md#disabling-a-workflow-the-pause-button)
+
 ## 3. Author and maintain actions (15–20%)
 
 [Domain 3 notes](github-cert-domain3.md)
 
 ### Create and troubleshoot custom actions
-- [ ] **Identify and implement action types (JavaScript, Docker, composite); understand immutable actions rollout on hosted runners and implications for version pinning and registry sources** (`using: 'node20'`, `using: 'docker'`, `using: 'composite'`; `uses: actions/checkout@v4` vs `@SHA`)
-- [ ] **Troubleshoot action execution and errors** (Inspect `dist/` for JS actions, check `ENTRYPOINT` for Docker, and shell context for Composite)
+- [x] **Identify and implement action types (JavaScript, Docker, composite); understand immutable actions rollout on hosted runners and implications for version pinning and registry sources** (`using: 'node20'`, `using: 'docker'`, `using: 'composite'`; `uses: actions/checkout@v4` vs `@SHA`)
+
+[Composite action](github-cert-domain3.md#anatomy-of-a-composite-action)
+[Docker action](github-cert-domain3.md#anatomy-of-a-docker-action)
+[Javascript action](github-cert-domain3.md#anatomy-of-a-javascript-action)
+
+- [x] **Troubleshoot action execution and errors** (Inspect `dist/` for JS actions, check `ENTRYPOINT` for Docker, and shell context for Composite)
 
 ### Define action structure and metadata
-- [ ] **Specify required files, directory structure, and metadata** (`action.yml` file, `inputs:`, `outputs:`, `runs:`)
-- [ ] **Implement workflow commands within actions** (JS: `core.setFailed()`, `core.setOutput()`; Bash: `echo "::set-output name=x::y"`)
+- [x] **Specify required files, directory structure, and metadata** (`action.yml` file, `inputs:`, `outputs:`, `runs:`)
+- [x] **Implement workflow commands within actions** (JS: `core.setFailed()`, `core.setOutput()`; Bash: `echo ""`)
 
 ### Distribute and maintain actions
-- [ ] **Select distribution models (public, private, marketplace)** (Public repo for marketplace vs. Internal/Private repo for Org-only)
-- [ ] **Publish actions to the GitHub Marketplace** (`branding: icon: 'check-circle', color: 'blue'`)
-- [ ] **Apply versioning and release strategies** (`git tag -a v1.0.0`, `git tag -fa v1 -m "Update v1 tag"`)
+- [x] **Select distribution models (public, private, marketplace)** (Public repo for marketplace vs. Internal/Private repo for Org-only)
+
+[GitHub Actions Distribution & Referencing Models](github-cert-domain3.md#github-actions-distribution--referencing-models)
+
+- [X] **Publish actions to the GitHub Marketplace** (`branding: icon: 'check-circle', color: 'blue'`)
+- [x] **Apply versioning and release strategies** (`git tag -a v1.0.0`, `git tag -fa v1 -m "Update v1 tag"`)
 
 ## 4. Manage GitHub Actions for the enterprise (20–25%)
 

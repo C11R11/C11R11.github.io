@@ -1,3 +1,5 @@
+[Github cert](github-cert.md)
+
 [Security Hardening (Secrets)](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions%23using-secrets)
 
 ## Preventing Secret Leakage
@@ -111,6 +113,17 @@ When calling external code (Workflows or Actions), you have three levels of secu
 | **Low** | `@main` | **High.** Code can change any second. | ⭐⭐⭐⭐⭐ |
 | **Medium** | `@v1` | **Moderate.** Tags can be moved (Mutable). | ⭐⭐⭐⭐ |
 | **High** | `@a1b2c3d` | **Zero.** Commits are Immutable. | ⭐ |
+
+# 🛡️ Immutability & Pinning (Domain 5)
+
+## 🔒 Best Practices
+1. **Pin by SHA:** For production/enterprise workflows to prevent "Tag Jumping."
+2. **Use Dependabot:** To manage the chore of updating SHAs.
+3. **Verified Creators:** Only use actions from "blue-check" creators (Google, AWS, GitHub) in sensitive pipelines.
+
+## 🎓 GH-200 Exam Fact
+The exam will ask: "What is the most secure way to reference an action?"
+* **Answer:** Use the full commit SHA.
 
 ## 🛡️ Best Practices for the Release Manager
 1. **Third-Party Actions:** (e.g., `actions/checkout`) -> **Pin to SHA** if you are in a high-security environment (FinTech, Healthcare).

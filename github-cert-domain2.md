@@ -1,3 +1,5 @@
+[Github cert](github-cert.md)
+
 > Beyond running workflows on feature branches, here are key tasks where the CLI outperforms or provides unique access compared to the Web UI:
 
 > * Watching Live Logs: You can use gh run watch to stream live logs directly to your terminal as a job executes. In the Web UI, you are stuck with the browser's refresh rate and interface.
@@ -140,3 +142,52 @@ Inside the `.github` repo, you need three files for every template you want to o
     ├── node-ci.yml           # The actual YAML code
     ├── node-ci.properties.json # Metadata (Name, Description, Icon)
     └── node-ci.svg            # Optional: Custom icon
+```
+
+## Disabling a Workflow (The "Pause" Button)
+*Use this when you want to stop runs temporarily (e.g., during a migration or a known bug).*
+
+| Feature | Behavior |
+| :--- | :--- |
+| **How to do it** | Actions Tab > Select Workflow > `...` Menu > **Disable workflow**. |
+| **Visibility** | The workflow remains visible in the Actions UI (with a paused icon). |
+| **History** | **Preserves** all past run history, logs, and artifacts. |
+| **Triggers** | Stops ALL triggers (`push`, `schedule`, `workflow_dispatch`). |
+| **YAML File** | The `.yml` file stays in the repository. |
+| **Reversibility** | Can be re-enabled with one click in the UI. |
+
+**Best Use Case:** You have a "Scheduled" cleanup job that is causing issues, and you want to stop it until you fix the code next week.
+
+---
+
+## 🗑️ Deleting a Workflow (The "Nuclear" Option)
+*Use this when a workflow is deprecated, obsolete, or was created by mistake.*
+
+| Feature | Behavior |
+| :--- | :--- |
+| **How to do it** | Actions Tab > Select Workflow > `...` Menu > **Delete workflow**. |
+| **Visibility** | The workflow is removed from the Actions UI. |
+| **History** | **Deletes ALL** past run history, logs, and associated artifacts. |
+| **Triggers** | If the `.yml` file still exists in the repo, it may "re-appear" on the next trigger. |
+| **YAML File** | Deleting in the UI does **NOT** delete the `.yml` file in your code. |
+| **Reversibility** | **Irreversible.** Once the history is gone, it is gone forever. |
+
+**Best Use Case:** You moved your build logic to a Reusable Workflow and the old "Legacy" workflow is cluttering the UI and no longer needed for auditing.
+
+---
+
+## ⚖️ Comparison Summary
+
+| Action | Stays in UI? | Keeps Logs? | Stops Schedules? | Affects Code? |
+| :--- | :--- | :--- | :--- | :--- |
+| **Disable** | Yes | ✅ Yes | ✅ Yes | No |
+| **Delete** | No | ❌ No | ⚠️ Only if file is deleted | No |
+
+---
+
+## 🎓 GH-200 Exam Tips (Domain 4)
+
+1.  **The "Re-appearing" Bug:** If you delete a workflow in the UI but **forget** to delete the `.yml` file in the `.github/workflows` folder, the workflow will show up again as soon as someone pushes code. To fully delete a workflow, you must **delete the file**.
+2.  **Permissions:** You must have **Write** access to the repository to disable or delete workflows.
+3.  **API/CLI:** You can disable workflows via the GitHub CLI: `gh workflow disable <id>`.
+4.  **Retention:** Deleting a workflow is the fastest way to free up storage space used by old artifacts (though setting a shorter retention policy is the "professional" way to do it).

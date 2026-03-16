@@ -1,5 +1,6 @@
-# Author and Manage Workflows
+[Github cert](github-cert.md)
 
+# Author and Manage Workflows
 
 [Variables reference](https://docs.github.com/en/actions/reference/workflows-and-actions/variables)
 [About workflow commands](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#about-workflow-commands)
@@ -290,3 +291,158 @@ Use a matrix strategy wihtin a single job
 4. A developer wants to trigger a workflow only when changes are made to the 'docs/' folder on the 'main' branch. How should the trigger be configured?
 
 on: push: branches: [main] paths['docs/**']
+
+# Github Containers (jobs and services)
+
+> Container services are for a single job (fresh container for job and then gets eliminated when the job ends).
+> Every job must define their own service 
+
+| Feature      | Job Container (`container:`)                                  | Service Container (`services:`)                                      |
+|--------------|---------------------------------------------------------------|-----------------------------------------------------------------------|
+| Role         | The "Home" where your steps execute.                         | The "Sidecar" that provides a dependency (DB, Cache).                |
+| Usage        | Replaces the runner's default OS environment.                | Runs alongside your code in a shared network.                        |
+| Networking   | Steps run inside this container.                             | Steps talk to it via a hostname (the service label).                 |
+
+```sh
+jobs:
+  test-database:
+    runs-on: ubuntu-latest
+    # This job runs inside a Node container
+    container: node:20 
+    
+    # These services are sidecars to the job
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+      redis:
+        image: redis
+
+    steps:
+      - name: Check Connectivity
+        # Because we are in a 'job container', we use the service label as the host
+        run: |
+          ping -c 1 postgres
+          ping -c 1 redis
+```
+
+| If your Job uses...        | Access Service via... | Do you need `ports:`? | Why? | Key Exam Memory Trigger |
+|----------------------------|-----------------------|------------------------|------|--------------------------|
+| runs-on: ubuntu-latest     | localhost:<port>      | ✅ Yes                 | The runner maps the service container port to the host’s loopback interface. | No job container → you must expose ports to reach the service. |
+| container: node:20         | <service_label>:<port>| ❌ No                  | Both containers are on the same user-defined Docker bridge network; DNS resolves the service label automatically. | Job container + service container → same Docker network → use label as hostname. |
+
+[Strategy Context Reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idstrategy)
+
+[Running variations of jobs in a workflow](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations)
+
+### 🧬 GitHub Actions Matrix Strategy Reference
+
+The `strategy` block allows you to run a single job definition across multiple variations simultaneously.
+
+| Property | Purpose | Exam Focus |
+| :--- | :--- | :--- |
+| **`matrix`** | Defines the variables and their values. | Every combination (Cartesian product) is created by default. |
+| **`fail-fast`** | Determines if GitHub should cancel all in-progress jobs if one fails. | Default is `true`. Set to `false` for exhaustive testing. |
+| **`max-parallel`** | Limits the number of jobs running at the same time. | Use this to avoid hitting API rate limits or runner quotas. |
+| **`include`** | Adds specific combinations or extra variables to a matrix. | Can add a unique variable (like a specific `flag`) to just one row. |
+| **`exclude`** | Removes specific combinations from the matrix. | Essential for removing unsupported versions (e.g., Node 20 on Windows 2019). |
+
+| Feature | Syntax | Impact |
+| :--- | :--- | :--- |
+| **Expansion** | `matrix: { os: [A, B], node: [1, 2] }` | Creates 4 jobs (Ax1, Ax2, Bx1, Bx2). |
+| **Include** | `include: [{ os: A, flag: '--fast' }]` | Adds `matrix.flag` ONLY to Ax1 and Ax2. |
+| **Exclude** | `exclude: [{ os: B, node: 1 }]` | Removes the Bx1 job from the run. |
+| **Fail-Fast** | `fail-fast: false` | Forces all 4 jobs to finish even if 3 fail. |
+
+---
+
+> The matrix context is only available inside a job that has a strategy: matrix: defined. You cannot use ${{ matrix.anything }} in a different job unless that job also has its own matrix.
+
+> If you use ${{ matrix.os }} in the runs-on field, GitHub will "multiply" that job. If your matrix has 2 OSs and 3 Versions, GitHub creates 6 distinct jobs.
+
+### 🧬 Matrix Variable Naming Rules
+
+| Component | Rule | Example |
+| :--- | :--- | :--- |
+| **Context Name** | **Reserved.** Must be `matrix`. | `${{ matrix.version }}` |
+| **Property Keys** | **Custom.** Use any alphanumeric name. | `os:`, `runtime:`, `database:` |
+| **Property Values** | **Arrays.** Must be a list of values. | `[18, 20]` or `['latest', 'beta']` |
+| **Accessing Values** | **Expression Syntax.** Use `${{ }}`. | `runs-on: ${{ matrix.os }}` |
+
+#### ⚠️ Warning: Reserved Key Names
+Avoid using keys that match top-level YAML properties like `include` or `exclude` as your variable names, as this will confuse the YAML parser.
+* **Bad:** `matrix: { include: [v1, v2] }`
+* **Good:** `matrix: { version: [v1, v2] }`
+
+### 🚨 Critical Update: Runner Image Lifecycles
+
+As a DevOps Engineer, you must track image deprecations to prevent "Pipeline Rot".
+
+* **Ubuntu-latest**: Transitions from **22.04** to **24.04** periodically. Be aware that `ubuntu-20.04` is reaching End-of-Life.
+* **Windows-latest**: In 2026, this typically points to **Windows Server 2025**. If your code relies on older drivers, you must pin to `windows-2022`.
+* **The "Pinned" Rule**: For production reliability, always prefer `ubuntu-22.04` over `ubuntu-latest` to avoid surprise breaks during image migrations.
+
+- [x] **Use predefined contexts (github, runner, env, vars, secrets, inputs, matrix, needs, strategy, job, steps, github.event, github.ref) to access workflow, repository, and runtime metadata; understand immutable actions behavior and version pinning requirements** (`${{ github.sha }}`, `${{ secrets.KEY }}`, `uses: actions/checkout@v4` vs `@SHA`)
+
+## GitHub Actions Contexts Quick Reference
+
+| Context | Purpose | Common Properties |
+| :--- | :--- | :--- |
+| **`github`** | Information about the workflow run and the event that triggered it. | `github.ref`, `github.repository`, `github.actor`, `github.event` |
+| **`env`** | Variables defined at the workflow, job, or step level using the `env:` key. | `env.MY_VAR` |
+| **`vars`** | Configuration variables defined at the Org, Repo, or Environment level. | `vars.API_URL`, `vars.PORT` |
+| **`secrets`** | Sensitive data (tokens, passwords) defined in GitHub Settings. | `secrets.GITHUB_TOKEN`, `secrets.DB_PASSWORD` |
+| **`inputs`** | Data passed to a `workflow_dispatch` or `workflow_call` event. | `inputs.deploy_target`, `inputs.debug_mode` |
+| **`matrix`** | The current job's specific combination of variables in a matrix strategy. | `matrix.os`, `matrix.node-version` |
+| **`needs`** | Outputs and status from jobs that this job depends on (via `needs:`). | `needs.build.outputs.version`, `needs.build.result` |
+| **`runner`** | Information about the machine executing the current job. | `runner.os`, `runner.temp`, `runner.tool_cache` |
+| **`job`** | Metadata about the current job being executed. | `job.status`, `job.container.id` |
+| **`steps`** | Status and outputs from steps already executed in the current job. | `steps.step_id.outputs.my_output`, `steps.step_id.outcome` |
+| **`strategy`** | Information about the matrix execution strategy. | `strategy.job-index`, `strategy.job-total` |
+
+**Github Context**
+
+[Contexts reference](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#available-contexts)
+
+[github context](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#github-context)
+
+[events that triggered workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
+
+```text
+# Quick info
+github.ref -> branch (refs/heads/main)
+github.repository -> the owner/repo (cert-labs-hq/automations-repo)
+github.action -> the user who triggers the workflow (if it's a re-run the github.triggerent_action may be different)
+github.event_name -> The name of the event that triggered the workflow run. (workflow_dispatch)
+github.event -> The full event webhook payload.
+github.event.workflow -> the workflow yml path (.github/workflows/test-version.yml)
+github.workflow_ref -> full workflow path (cert-labs-hq/automations-repo/.github/workflows/test-version.yml@refs/heads/main)
+```
+# 📊 Data Management: Artifacts vs. Cache vs. Outputs
+
+In GitHub Actions, managing data efficiently depends on understanding where the data needs to go and how long it needs to live.
+
+| Feature | Scope | Persistence | Best Use Case |
+| :--- | :--- | :--- | :--- |
+| **Outputs** | **Job-to-Job** | Current Run Only | Passing small strings, IDs, version numbers, or boolean flags between dependent jobs. |
+| **Artifacts** | **Workflow-to-User** | Up to 90 Days | Storing build binaries (.exe, .apk), test coverage reports, or logs for human download. |
+| **Cache** | **Run-to-Run** | Up to 7 Days* | Speeding up builds by reusing expensive dependencies like `node_modules`, `~/.nuget/packages`, or `~/.m2`. |
+
+## 🔑 Key Strategic Differences
+
+### 1. Direction of Flow
+* **Outputs:** Move **forward** in time within a single workflow execution (Job A → Job B).
+* **Artifacts:** Move **outward** to the user or an external storage area.
+* **Cache:** Moves **backward** from a past successful run into a future run.
+
+### 2. Storage & Costs
+* **Artifacts:** Count against your GitHub storage quota (once the limit is reached, you are billed).
+* **Cache:** GitHub evicts the oldest cache once you hit a **10GB limit per repository**. It does not cost extra money but is "best effort" storage.
+
+### 3. The "Bust" Mechanism
+* **Outputs/Artifacts:** These are fresh for every run; no "busting" required.
+* **Cache:** Requires a change in the `key` to invalidate. If your `package-lock.json` or `csproj` hasn't changed, the cache will persist. 
+
+---
+*Note: Caches are automatically deleted if they haven't been accessed in 7 days.*

@@ -1,3 +1,13 @@
+[Github cert](github-cert.md)
+
+# 🗺️ Architecture Mapping (GH-200 to Industry)
+
+When I learned the GH-200, I focused on architectural patterns that are platform-agnostic:
+
+1. **The Orchestration Pattern:** Centralizing logic to reduce "YAML sprawl" in application repos (Called 'Reusable Workflows' in GH, 'Parent-Child Pipelines' in GitLab).
+2. **Immutable Infrastructure:** Ensuring builds are reproducible by using Docker-based actions and SHA-pinned dependencies.
+3. **Automated Governance:** Using compliance gates to ensure security scans run automatically, regardless of the platform’s specific runner type.
+
 # Domain 4: Enterprise Management
 
 ## 🛡️ SHA Policy Inheritance & Recursive Enforcement
