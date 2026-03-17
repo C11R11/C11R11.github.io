@@ -123,3 +123,116 @@ When developers own a copy of a workflow file, the "Source of Truth" becomes fra
 
 ## 💡 The "DevOps Rule of One"
 If you have to manage more than **one** file in a remote repository, your abstraction is leaking. Move the extra files into nested `workflow_call` logic in your central repository.
+
+# 🚀 GH-200: Final Mastery Cheatsheet
+
+## 1. The Policy Hierarchy (Cascading Rules)
+* **Most Restrictive Wins:** Policies can only be narrowed at lower levels, never widened.
+* **Enterprise Account (EA):** Sets the "Ceiling."
+* **Organization:** Can further limit (e.g., EA allows "Verified," Org limits to "GitHub only").
+* **Logic:** If EA allows "Any action," an Org can still choose to allow "No actions."
+
+## 2. Environment Persistence & "Magic Files"
+* **Step Isolation:** Every `run:` block is a new shell. `export` commands do **not** persist.
+* **The Big Three:**
+    * **Variables:** `echo "KEY=VAL" >> $GITHUB_ENV`
+    * **Binaries:** `echo "/usr/bin/tool" >> $GITHUB_PATH`
+    * **Outputs:** `echo "name=value" >> $GITHUB_OUTPUT`
+* **Multi-line Output Syntax:**
+    ```bash
+    {
+      echo "JSON_DATA<<EOF"
+      cat data.json
+      echo "EOF"
+    } >> $GITHUB_OUTPUT
+    ```
+
+## 3. Governance & Scalability
+* **Internal Visibility:** Allows any repo in the **same Enterprise** to access an action via `uses:`, even if the repo is private.
+* **Audit Log Streaming:** Use for **IP addresses** and SIEM integration (Splunk/S3).
+* **Required Workflows:** Enforces a workflow (e.g., Security Scan) to run on **all** repositories in an Org automatically.
+
+## 4. Self-Hosted Runner Management
+* **Labels:** Identify *capabilities* (e.g., `runs-on: [self-hosted, linux, gpu]`).
+* **Groups:** Identify *permissions* (e.g., "Only the Prod Repo can access this group").
+* **Ephemeral Flag:** `--ephemeral`. Runner unregisters immediately after **one** job. 
+* **Auto-Update:** Runners update themselves automatically when idle.
+
+## 5. Billing & Multipliers
+* **Linux:** 1.0x
+* **Windows:** 2.0x
+* **macOS:** 10.0x
+* **Storage:** Billed for Artifacts, Packages, and Actions metadata.
+
+---
+
+## 🛠️ Lab Implementation: The "Admin-Action" Bridge
+
+### Step 1: Create an Internal Action (In `my-org/custom-action`)
+```yaml
+# action.yml
+name: 'Enterprise Setup'
+description: 'Sets global env and path'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        echo "GLOBAL_TOOL_VERSION=1.2.3" >> $GITHUB_ENV
+        echo "::add-mask::${{ inputs.secret_key }}"
+      shell: bash
+```
+
+### Step 2: Enforce Policy (UI Task)
+1. Navigate to **Org Settings** > **Actions** > **General**.
+2. Select **Allow select actions**.
+3. Add `my-org/custom-action` and `actions/*`.
+4. Save.
+
+### Step 3: Verify Persistence (In any other repo)
+```yaml
+# workflow.yml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: my-org/custom-action@v1
+      - name: Check Environment
+        run: echo "The version is $GLOBAL_TOOL_VERSION"
+```
+
+---
+
+### 💡 Final "Exam-Day" Mental Checks
+* **action.yml:** Only place for `branding` and `inputs`.
+* **OIDC:** The answer for "Eliminating static cloud keys."
+* **always():** Runs even if the job is cancelled.
+* **SHAs:** Security choice. **Tags:** Convenience choice.
+
+
+# QUIZ FAILS
+
+1. An enterprise wants to ensure that all workflows across 100 repositories use a specific set of security scanning steps without requiring each team to manually update their YAML files. What is the best feature to use?
+
+![alt text](image-16.png)
+
+2. What happens to a Self-Hosted runner if the 'Runner Application' is outdated and a new version is released by GitHub?
+
+![alt text](image-17.png)
+
+3. An Enterprise Administrator sets a policy at the Enterprise Account level to 'Allow all actions'. However, an Organization Administrator within that enterprise wants to restrict their specific Org to 'GitHub-authored actions only'. What is the result?
+
+![alt text](image-18.png)
+
+4. You need to audit which user triggered a workflow that resulted in a large bill. The Organization audit log shows the event, but you need to see the IP address of the actor for a security investigation. Which feature is required to access this level of detail at scale?
+
+![alt text](image-19.png)
+
+5. A team is using a Self-Hosted runner group. You want to ensure that only repositories tagged with 'Internal' can use these runners. Where do you configure this restriction?
+
+![alt text](image-20.png)
+
+6. Which GitHub feature is specifically designed to allow 'Inner-Sourcing' of actions by sharing them across an entire Enterprise without making them public to the world?
+
+![alt text](image-21.png)
+
+
