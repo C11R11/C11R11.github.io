@@ -106,9 +106,9 @@
 ## 4. Manage GitHub Actions for the enterprise (20–25%)
 
 ### Distribute and govern actions and workflows
-- [ ] **Define and manage reusable components and templates** (`on: workflow_call:`, `.github/workflow-templates/`)
-- [ ] **Control access to actions and workflows within the enterprise** (Enterprise Settings -> Policies -> Actions -> "Allowed actions")
-- [ ] **Configure organizational use policies** (Settings -> Actions -> General -> "Allow all", "Allow select actions", "Allow verified creators")
+- [x] **Define and manage reusable components and templates** (`on: workflow_call:`, `.github/workflow-templates/`)
+- [x] **Control access to actions and workflows within the enterprise** (Enterprise Settings -> Policies -> Actions -> "Allowed actions")
+- [x] **Configure organizational use policies** (Settings -> Actions -> General -> "Allow all", "Allow select actions", "Allow verified creators")
 
 ### Manage runners at scale
 - [ ] **Configure and monitor GitHub-hosted and self-hosted runners** (`runs-on: ubuntu-latest` vs `./config.sh --url ... --token ...`)

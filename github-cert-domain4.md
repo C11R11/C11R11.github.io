@@ -208,6 +208,63 @@ jobs:
 * **always():** Runs even if the job is cancelled.
 * **SHAs:** Security choice. **Tags:** Convenience choice.
 
+# Programatic secrets managements
+
+```bash
+# Set a repository variable (Non-encrypted)
+gh variable set LOG_LEVEL --body "debug" --repo cert-labs-hq/external-repo
+
+# Set a repository secret (Encrypted)
+gh secret set DEPLOY_KEY --body "super-secret-string" --repo cert-labs-hq/external-repo
+
+# List them to verify
+gh secret list --repo cert-labs-hq/external-repo
+```
+
+# Runner management
+
+```bash
+# Check the runner status directly on the Mac
+./config.sh --version
+
+# View the status of your runner in the Org (using GH CLI)
+gh api orgs/cert-labs-hq/actions/runners
+
+# List the most recent diagnostic logs
+ls -lt _diag/ | head -n 5
+
+# Stream the 'Worker' log (shows exactly what the runner is doing during a job)
+tail -f _diag/Worker_$(date +%Y%m%d)*.log
+
+# Install the runner as a macOS Launchd service
+sudo ./svc.sh install
+
+# Start the service (it will now auto-start on boot)
+sudo ./svc.sh start
+
+# Check service status
+sudo ./svc.sh status
+
+```
+
+## Runner software information
+
+```sh
+echo -e "###  Mac Mini Runner Capabilities\n\n| Tool | Version |\n| :--- | :--- |\n| **OS** | $(sw_vers -productVersion) |\n| **Runner** | $(./config.sh --version | grep "Runner version" | awk '{print $3}') |\n| **Node** | $(node -v 2>/dev/null || echo "Not Installed") |\n| **Git** | $(git --version | awk '{print $3}') |\n| **Docker** | $(docker version --format '{{.Server.Version}}' 2>/dev/null || echo "Not Running") |\n| **Terraform** | $(terraform version | head -n 1 | awk '{print $2}' 2>/dev/null || echo "Not Installed") |" > capability-report.md && cat capability-report.md
+```
+
+```yaml
+jobs:
+  audit-runner:
+    runs-on: self-hosted
+    steps:
+      - name: Check Tool Versions
+        run: |
+          echo "OS: $(sw_vers -productVersion)"
+          echo "Node: $(node -v)"
+          echo "Docker: $(docker --version)"
+          echo "Toolcache: $AGENT_TOOLSDIRECTORY"
+```
 
 # QUIZ FAILS
 
