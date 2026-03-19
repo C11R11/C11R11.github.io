@@ -292,4 +292,32 @@ jobs:
 
 ![alt text](image-21.png)
 
+7. A developer’s workflow fails on your GitHub-hosted ubuntu-latest runner because a specific tool version is missing. Where is the official place to verify which versions of gh, jq, or docker are currently on that image?
 
+A: Check the actions/runner-images repository release notes.
+
+8. Your Mac Mini is online and the service is running, but a job in external-repo has been "Queued" for 10 minutes. The workflow uses runs-on: [self-hosted, macos, production]. What is the most likely cause?
+
+A: The runner is missing the production label.
+
+The Trap: While a runner being busy (D) can cause a queue, the exam usually tests Labels. If your YAML asks for [self-hosted, macos, production] but your Mac only has [self-hosted, macos], the job will stay "Queued" forever because no runner matches all three requirements.
+
+9. Your company has a strict firewall. You need to allow your self-hosted runner to communicate with GitHub's Actions API. How do you find the specific IP ranges to whitelist?
+
+A: Use the GET /meta endpoint of the GitHub REST API.
+
+The Trap: GitHub’s IP ranges change frequently. You should never hardcode them (C). The official way to get the current list for your firewall is the GET /meta API endpoint (or gh api meta).
+
+https://api.github.com/meta
+
+10. How does the Runner Agent (the software on your Mac Mini) receive updates to its core code (e.g., from version 2.311 to 2.312)?
+
+A: It automatically updates itself when a new version is released by GitHub.
+
+The Trap: This is a "Magic" feature of GitHub. The Runner Agent automatically updates itself before it starts a job if a new version is available. You don't have to run a command (C) or a manual script.
+
+11. You want to set a specific environment variable (e.g., NODE_ENV=production) that is available to every job that runs on your Mac Mini, regardless of which repository sent the job. Where is the best place to define this?
+
+A: In the .env file in the runner's root directory.
+
+The Trap: While using "gh variable set" in the org works at the GitHub Actions level, the question asked how to set it for every job that runs on your Mac Mini specifically. If you have two different runners (one Mac, one Linux), and only the Mac needs NODE_ENV=production, you put it in a .env file inside the runner folder. The runner loads this file into the environment before every job.

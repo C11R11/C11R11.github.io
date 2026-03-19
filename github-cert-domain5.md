@@ -1,5 +1,66 @@
 [Github cert](github-cert.md)
 
+# Environments
+
+> Environment Protection Rules (like Required Reviewers and Wait Timers) are a GitHub Enterprise and GitHub Pro/Team feature.
+
+```text
+The Exam Scenario: The exam might ask, "You have a developer using a personal fork to test a deployment. Why are the Environment Protection Rules not triggering?"
+
+The Answer: Because the rules are defined in the Organization's environment, and the personal fork does not inherit the Org's environment settings.
+```
+
+## Source governance
+
+Even though you won't configure environments inside the external repo, you use it to test Open Source Governance:
+
+* Collaborator Permissions: How do you stop a contributor from the ExternalRepo from running a malicious workflow on your Org's runners?
+
+* Fork PR Policy: In Org Settings -> Actions -> General, there is a setting called "Fork pull request workflows from outside collaborators."
+
+  * In your lab, you should set this to "Require approval for all outside collaborators."
+
+  * The Test: Try to open a PR from ExternalRepo to test-repo. You will see a yellow bar saying "Approval required to run workflows." This is a massive part of Domain 5 compliance.
+
+## Environment Gates
+
+### The Environment as a "Security Container"
+In GitHub, an Environment is not just a name (like production or staging). It is a rule-based engine. When a workflow job says environment: production, GitHub pauses the runner and checks three specific "Gates" before it allows a single line of code to execute.
+
+### The Three Pillars of Protection
+A. Deployment Protection Rules (The "Human Gate")
+* Required Reviewers: This is the most common gate. You define a list of people (or a Team) who must manually click "Approve" in the GitHub UI.
+
+* Wait Timer: You can force a delay (e.g., 10 minutes) after a job is triggered. This is used in "Canary" deployments to ensure no immediate smoke-test failures occur before moving to the next stage.
+
+B. Deployment Branch Policy (The "Source Gate")
+* This is a critical compliance feature. It ensures that only code from specific branches (e.g., main or releases/*) can deploy to that environment.
+
+* The Scenario: A developer creates a "Feature" branch and tries to trigger a production deploy. Even if they have the secret, the Environment will reject the job because it didn't come from main.
+
+C. Environment Secrets & Variables (The "Access Gate")
+* Instead of putting your AWS keys at the Repository level (where any workflow can use them), you put them at the Environment level.
+
+* The Security Win: These secrets are only "unlocked" and injected into the runner after the reviewer clicks "Approve."
+
+### How this fits your "Platform Engineer" Role
+Using your infra-repo to manage these via Terraform is the "Gold Standard." It allows you to:
+
+* Standardize: Every repo you give to your 10 devs automatically gets a production environment with the same rules.
+
+* Audit: You have a version-controlled history of who is allowed to approve deployments.
+
+* Prevent "Drift": If a developer tries to manually remove themselves as a reviewer in the UI, your Terraform plan will catch it and put the protection back.
+
+## Order of operations
+
+```sh
+Workflow Start -> Environment Check -> Wait Timer (if any) -> Reviewer Approval -> Secret Injection -> Job Execution.
+````
+> If the Reviewer rejects the job, the Secrets are never decrypted or sent to the runner.
+
+# Secrets
+
 [Security Hardening (Secrets)](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions%23using-secrets)
 
 ## Preventing Secret Leakage

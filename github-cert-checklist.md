@@ -111,14 +111,14 @@
 - [x] **Configure organizational use policies** (Settings -> Actions -> General -> "Allow all", "Allow select actions", "Allow verified creators")
 
 ### Manage runners at scale
-- [ ] **Configure and monitor GitHub-hosted and self-hosted runners** (`runs-on: ubuntu-latest` vs `./config.sh --url ... --token ...`)
-- [ ] **Apply IP allow lists and networking settings** (Enterprise Settings -> "IP allow list" for Runner API/Actions traffic)
-- [ ] **Manage runner groups and troubleshoot runner issues** (Settings -> Actions -> Runner Groups -> "Selected repositories"; check `_diag` folder for logs)
-- [ ] **Identify preinstalled software/tool versions on GitHub-hosted runners (image release notes, toolcache) and install additional software at runtime (setup-* actions, package managers, caching, container images, custom self-hosted images)** (Check `runner-images` repo, `uses: actions/setup-node@v4`, `sudo apt-get install`, `uses: actions/cache@v4`)
+- [x] **Configure and monitor GitHub-hosted and self-hosted runners** (`runs-on: ubuntu-latest` vs `./config.sh --url ... --token ...`)
+- [x] **Apply IP allow lists and networking settings** (Enterprise Settings -> "IP allow list" for Runner API/Actions traffic)
+- [x] **Manage runner groups and troubleshoot runner issues** (Settings -> Actions -> Runner Groups -> "Selected repositories"; check `_diag` folder for logs)
+- [x] **Identify preinstalled software/tool versions on GitHub-hosted runners (image release notes, toolcache) and install additional software at runtime (setup-* actions, package managers, caching, container images, custom self-hosted images)** (Check `runner-images` repo, `uses: actions/setup-node@v4`, `sudo apt-get install`, `uses: actions/cache@v4`)
 
 ### Manage encrypted secrets and variables
-- [ ] **Define and scope encrypted secrets and variables at the organization, repository, and environment levels** (Settings -> Secrets and variables -> Actions; UI scoping options)
-- [ ] **Access and use secrets and variables in workflows and actions; manage secrets and variables programmatically via REST APIs** (`${{ secrets.ORG_SECRET }}`, `${{ vars.GLOBAL_VAR }}`, `gh secret set <name> --org <org_name>`)
+- [x] **Define and scope encrypted secrets and variables at the organization, repository, and environment levels** (Settings -> Secrets and xvariables -> Actions; UI scoping options)
+- [x] **Access and use secrets and variables in workflows and actions; manage secrets and variables programmatically via REST APIs** (`${{ secrets.ORG_SECRET }}`, `${{ vars.GLOBAL_VAR }}`, `gh secret set <name> --org <org_name>`)
 
 ## 5. Secure and optimize automation (10–15%)
 
