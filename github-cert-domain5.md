@@ -10,6 +10,14 @@ The Exam Scenario: The exam might ask, "You have a developer using a personal fo
 The Answer: Because the rules are defined in the Organization's environment, and the personal fork does not inherit the Org's environment settings.
 ```
 
+### ⏳ Environment Wait Timers
+* **Function:** A "forced cooldown" (in minutes) before a job starts.
+* **Use Case:** Allowing for "Bake Time" in Staging or waiting for cloud DNS/DB migrations to stabilize.
+* **Interaction:** If a **Reviewer** and **Wait Timer** are both present:
+  1. The Timer starts immediately.
+  2. The Reviewer can approve at any time.
+  3. The Job **only starts** when the Timer reaches 0 **AND** the Reviewer has approved.
+
 ## Source governance
 
 Even though you won't configure environments inside the external repo, you use it to test Open Source Governance:
@@ -274,7 +282,84 @@ Always map the GitHub Context to an environment variable in the `env:` block of 
 - run: echo "User is $USER_NAME"
   env:
     USER_NAME: ${{ github.actor }}
+```
 
 > * Token Scoping: Fine-grained PATs must have the Organization as the Resource Owner to modify Org repos; otherwise, you get the 403 you encountered.
 > * The "Metadata" Base: Every token needs at least metadata: read to even see a repository's exists via the API.
 > * To create repos you need the Administration and Content permission (read and write)
+
+# 🛡️ GitHub Enterprise Governance & Scaling
+
+## 1. Branch Protection vs. Repository Rulesets
+| Feature | **Branch Protection Rules** | **Repository Rulesets** |
+| :--- | :--- | :--- |
+| **Scope** | Single Repository only. | **Organization-wide** or per-repo. |
+| **Scaling** | Manual per repo. | **Auto-target** via topics/regex. |
+| **Enforcement** | Admin Bypass is a simple toggle. | **Granular Bypass** (Roles/Apps/Teams). |
+| **Evaluation** | Always "Live." | Supports **"Evaluate Mode"** (Dry run). |
+
+> **💡 GH-200 Exam Note:** Rulesets are the modern standard. They allow you to enforce a PR policy across **all** repositories in an Org with a single Terraform resource.
+
+---
+
+## 2. The Hierarchy of Secrets & Variables
+GitHub uses an **Inheritance Model**. A workflow job can "see" data from multiple layers:
+
+1.  **Organization Level:** Shared across the whole company (e.g., `SONAR_TOKEN`).
+2.  **Repository Level:** Specific to the application code (e.g., `APP_NAME`).
+3.  **Environment Level:** Specific to the deployment target (e.g., `PROD_DB_URL`).
+
+**Priority Rule:** If a secret name exists at multiple levels, the **most specific** one wins (Environment > Repo > Org).
+
+---
+
+## 3. Environment Governance (The "Deployment Gate")
+Environments are **Repository-Scoped** boundaries. They do not exist at the Org level because they hold target-specific secrets.
+
+* **Manual Approvals:** Pause a workflow until a designated user/team clicks "Approve."
+* **Wait Timers:** Force a delay (e.g., 10m) before deployment to allow for manual smoke tests.
+* **Branch Policies:** Hard-restrict which branches can deploy to which environments (e.g., Only `main` can deploy to `production`).
+* **Prevent Self-Review:** Ensures the person who merged the PR cannot be the one to approve the deployment.
+
+---
+
+## 4. Terraform Scaling (The "Central Infra" Pattern)
+
+### Example: Scaling via Modules
+```hcl
+# main.tf
+module "standard_repo" {
+  for_each    = toset(["api-service", "frontend-app", "auth-worker"])
+  source      = "./modules/gh-repo"
+  repo_name   = each.key
+  description = "Managed by Central DevOps Team"
+}
+```
+
+### Example: Organization Ruleset
+```hcl
+resource "github_organization_ruleset" "global_main_protection" {
+  name        = "enforce-pr-and-checks"
+  target      = "all"
+  enforcement = "active"
+
+  rules {
+    pull_request {
+      required_approving_review_count = 1
+    }
+    required_status_checks {
+      required_check {
+        context = "test_and_scan"
+      }
+    }
+  }
+}
+```
+
+---
+
+## 5. Summary: The "Chain of Trust"
+To achieve **SOC2/ISO Compliance**, follow this sequence:
+1.  **Code Gate:** Rulesets/Branch Protection (Ensures the code is reviewed).
+2.  **Health Gate:** Status Checks (Ensures the code is passing tests/security scans).
+3.  **Deployment Gate:** Environments (Ensures a human authorized the infrastructure change).

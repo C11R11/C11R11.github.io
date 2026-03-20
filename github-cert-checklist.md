@@ -125,12 +125,12 @@
 [Domain 5 notes]](github-cert-domain5.md)
 
 ### Implement security best practices
-- [ ] **Use environment protections and approval gates** (`environment: production`, "Required reviewers", "Wait timer")
+- [x] **Use environment protections and approval gates** (`environment: production`, "Required reviewers", "Wait timer")
 - [ ] **Identify and use trustworthy actions from the Marketplace** (Look for the "Verified Creator" blue badge ✅)
 - [ ] **Mitigate script injection (sanitize/validate inputs, least-privilege permissions, avoid untrusted data in run:, proper shell quoting, prefer vetted actions over inline scripts)** (Use `env` variables for `${{ github.event... }}` instead of direct expansion in `run:`)
-- [ ] **Understand GITHUB_TOKEN lifecycle (ephemeral, scoped), configure granular permissions, contrast with PAT; restrict write scopes** (`permissions: contents: read`, `pull-requests: write`)
+- [x] **Understand GITHUB_TOKEN lifecycle (ephemeral, scoped), configure granular permissions, contrast with PAT; restrict write scopes** (`permissions: contents: read`, `pull-requests: write`)
 - [ ] **Use OIDC token (id-token permission) for cloud provider federation to eliminate long-lived cloud secrets** (`permissions: id-token: write`, `uses: aws-actions/configure-aws-credentials@v4`)
-- [ ] **Pin third-party actions to full commit SHAs; align with immutable actions enforcement on hosted runners; avoid floating @main/@v* without justification** (`uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29`)
+- [x] **Pin third-party actions to full commit SHAs; align with immutable actions enforcement on hosted runners; avoid floating @main/@v* without justification** (`uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29`)
 - [ ] **Enforce action usage policies (organization/repository allow/deny lists, required reviewers for unverified actions)** (Org Settings -> Actions -> General -> "Allow select actions")
 - [ ] **Generate and verify artifact attestations / provenance (e.g., SLSA, build metadata) and integrate into deployment verification** (`uses: actions/attest-build-provenance@v1`, `gh attestation verify`)
 

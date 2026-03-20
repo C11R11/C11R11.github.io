@@ -4,6 +4,8 @@
 * [Github actions](github-actions.md) - Github actions
 * [GH-200 checklist](github-cert-checklist.md) - GH-200: GitHub Actions Certification Checklist
 * [Semantic versioning](semantic-versioning)
+* [Branching strategies](github-branching-strategies.md)
+* [Full gitops CICD pipeline description](github-gitops.md)
 
 # 🎓 GitHub Actions (GH-200) Certification Domains (2026)
 
