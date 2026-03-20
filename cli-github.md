@@ -73,3 +73,15 @@ gh secret list --repo cert-labs-hq/external-repo
 # For organization secrets, they can define certains repos to be used
 gh secret set SECRET_NAME --org your-organization --repos "repository1,repository2,..."
 ```
+
+# Artifacts
+
+```sh
+#Verify Attestation
+gh attestation verify <file> --repo <owner/repo>
+
+# List Artifacts
+gh run view <run-id> --json artifacts
+
+# Delete Artifact
+DELETE /repos/{owner}/{repo}/actions/artifacts/{id}
