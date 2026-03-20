@@ -6,6 +6,9 @@
 # Repo status and history
 git log --oneline --graph --decorate --all
 
+#Shallow clone is a copy of a repository with a truncated commit history, which significantly reduces the download time and disk space used
+git clone --depth 1 <repository_URL>
+
 # See an specific commit changes
 git show <commit-hash>
 

@@ -794,3 +794,21 @@ jobs:
       # 🔐 Pass a PAT that has access to Repo B
       REPO_B_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
 ```
+
+# Questions
+
+1. If you want to prevent a new deployment from starting while a previous one is still running to avoid state locks, which feature should you use?
+
+A: Concurrency: Concurrency groups ensure that only one job or workflow with the same group runs at the time
+
+2. What is the effect of setting 'fetch-depth: 1' in the actions/checkout step?
+
+A: It only download the last commit, reducing build time and disk usage.
+
+> Git shalloe clone is a copy of a repo with a truncated commit history (git clone --depth 1 <repository_URL>)
+
+3. You have a matrix job testing multiple OS environments. If the Windows job fails, you want the Linux and macOS jobs to finish. Which setting is required?
+
+A: fail-fast:false 
+
+Disabling fail-fast ensures that all matrix combinations complete their run refardless of individual failures
