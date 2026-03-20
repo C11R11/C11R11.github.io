@@ -363,3 +363,434 @@ To achieve **SOC2/ISO Compliance**, follow this sequence:
 1.  **Code Gate:** Rulesets/Branch Protection (Ensures the code is reviewed).
 2.  **Health Gate:** Status Checks (Ensures the code is passing tests/security scans).
 3.  **Deployment Gate:** Environments (Ensures a human authorized the infrastructure change).
+
+# 🛡️ Mitigating Script Injection in GitHub Actions
+
+In **Domain 5 (Secure and Optimize Automation)**, one of the most critical risks is **Script Injection**. This occurs when untrusted user input (like an issue title, PR comment, or branch name) is executed as a command.
+
+### ❌ The Vulnerable Way (Direct Expression Expansion)
+Using `${{ ... }}` directly inside a `run:` block allows a malicious actor to "break out" of your command and execute their own.
+
+```yaml
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Issue Title
+        # ⚠️ VULNERABLE: Direct injection point
+        run: echo "Processing issue: ${{ github.event.issue.title }}"
+
+#When the runner executes the command, the shell sees:
+#echo "Hello, the issue title is: Awesome Feature" ; rm -rf / ; echo "Hacked"
+# - It echoes the title
+# - It executes rm -rf /, attempting to wipe your runner's file system
+# - It echoes "hacked"
+
+on:
+  issues:
+    types: [opened]
+
+...
+# 🛡️ SECURE: Map to an env variable first
+      - name: Greet user
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        # Use the shell variable ($ISSUE_TITLE), not the expression
+        run: echo "Hello, the issue title is: $ISSUE_TITLE"
+
+```
+
+* Rule 1: Never use ${{ ... }} inside run: for data that a user can influence (Issues, PRs, Labels, Branch names).
+* Rule 2: Always map untrusted data to an env: block at the step or job level.
+* Rule 3 (Defense in Depth): Combine this with Least-Privilege Permissions. Even if a script is injected, ensure the GITHUB_TOKEN only has contents: read so it cannot modify your repository.
+
+```yml
+permissions:
+  contents: read
+  issues: read
+```
+
+# OIDC: Eliminating Long-Lived Cloud Secrets 
+
+## 1 The Workflow Configuration
+To use OIDC, your workflow needs a specific permission called id-token. This allows the runner to fetch a JWT (JSON Web Token) from GitHub to present to AWS.
+
+```yml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # 🛡️ MANDATORY for OIDC
+    permissions:
+      id-token: write   # This is required to request the JWT
+      contents: read    # This is required for actions/checkout
+      
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # This is the ARN of the IAM Role you create in AWS
+          role-to-assume: arn:aws:iam::123456789012:role/my-github-actions-role
+          aws-region: us-east-1
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service --cluster my-cluster --service my-app --force-new-deployment
+```
+
+## 2 The AWS Side (The Trust Relationship)
+For this to work, you must create an Identity Provider in AWS IAM and a Role with a "Trust Policy." This policy tells AWS: "I trust tokens from GitHub, but only if they come from MY organization and MY repository."
+
+Example Trust Policy (The Logic):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com" },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:C11R11/test-repo:*"
+        }
+      }
+    }
+  ]
+}
+```
+## 📊 Why OIDC is a "Domain 5" Win
+
+| Feature | Old Way (Static Secrets) | New Way (OIDC) |
+| :--- | :--- | :--- |
+| **Secret Management** | Requires manual rotation/storage in GitHub Secrets. | **Zero maintenance.** No permanent keys to manage. |
+| **Security Risk** | Permanent keys can be leaked or stolen from the repo. | **Tokens expire** automatically when the job finishes. |
+| **Governance** | Hard to limit a static key to a specific repository. | **Scope access** to specific organizations, repos, or branches. |
+| **Compliance** | Fails many modern security audits (PCI/SOC2). | **Industry Gold Standard** for cloud federation. |
+
+## Important
+
+* The Permission: If you forget id-token: write, the aws-actions/configure-aws-credentials action will fail with a "Could not fetch ID token" error.
+* The Action Version: You must use at least v2 or higher of the AWS action to support OIDC.
+* Scoped Trust: You can restrict the trust policy so that only the main branch can assume the "Production" role, preventing a developer from deploying from a feature branch.
+
+
+# Artifact Attestations & Provenance
+
+In Domain 5, this is referred to as Software Bill of Materials (SBOM) and SLSA (Supply-chain Levels for Software Artifacts).
+
+## The Core Concept
+
+An Attestation is a digitally signed document that says: "I, GitHub Actions, built this specific file (SHA-256) using this specific workflow on this specific branch." If someone tries to swap your compiled .exe or Docker image with a malicious version, the Verification step will fail because the signature won't match.
+
+## The Implementation (Generating Proof)
+
+GitHub provides a built-in action to handle the heavy lifting. It uses Sigstore (a passwordless signing service) under the hood.
+
+```yml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write      # Required for Sigstore signing
+      attestations: write  # Required to write the attestation to GitHub
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Artifact
+        run: echo "Final Build" > my-app.zip
+
+      - name: Generate Attestation
+        uses: actions/actions/attest-build-provenance@v1
+        with:
+          subject-path: 'my-app.zip'
+```
+
+## The Verification (Checking Proof)
+On your deployment server (or even on your local Mac Mini), you can verify that the file is legitimate using the GitHub CLI (gh).
+
+```sh
+# Verify the file before deploying it
+gh attestation verify my-app.zip --repo C11R11/test-repo
+
+#If the file was tampered with, you will get a scary red error. If it’s safe, you’ll see "Verification succeeded!"
+```
+
+## 📊 Why Artifact Attestations are a "Domain 5" Win
+
+| Feature | Without Attestations | With Attestations (SLSA) |
+| :--- | :--- | :--- |
+| **Tamper Detection** | None. A malicious actor could swap a file in S3/ECR after the build. | **Instant Detection.** If even one byte is changed, the digital signature will not match. |
+| **Origin Trust** | "Implicit" trust. We hope the file in our bucket is the one we built. | **"Zero Trust"** model. The file carries its own proof of origin (who, when, and where). |
+| **Audit/Compliance** | Very difficult to prove the exact source code for a specific binary. | **Full Traceability.** Every artifact is linked to a specific GitHub PR, Commit, and Workflow run. |
+| **Standard** | No standardized metadata. | **SLSA Level 3 compliant.** Meets the highest industry standards for supply chain security. |
+
+## Important 
+
+* The attestation is detached metadata stored on GitHub's backend, not inside your file.
+  * It calculates the unique SHA-256 fingerprint of your file
+  * It creates a separate JSON document (the Attestation) that contains that SHA-256 hash, the workflow name, the run ID, and the commit SHA.
+  * It signs that document using Sigstore and stores it in a secure "Attestation Store" associated with your GitHub repositor
+* When you run gh attestation verify, the CLI sends the hash of your local file to GitHub and asks: "Do you have a signed certificate that matches this fingerprint?"
+* The Tool: The exam might mention SLSA (pronounced "Salsa"). Just remember: Attestations = SLSA Level 3 compliance.
+* The Permissions: You must have id-token: write because the signing process uses the same OIDC technology we just discussed for AWS.
+* The Subject: You can attest files, Docker images, and even entire directories.
+
+# 📈 Efficiency: Caching & Artifact Retention Management
+
+In **Domain 5 (Secure and Optimize Automation)**, the focus is on reducing build times and controlling storage costs through intelligent cleanup and API-driven management.
+
+## 1. Artifact Retention Policies
+By default, GitHub keeps artifacts for 90 days. For a DevOps engineer, this is usually unnecessary and expensive. You can override this at the **Workflow level** or the **Job level**.
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload Production Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-binary
+          path: bin/
+          # 🛡️ DOMAIN 5: Minimal retention for security and cost
+          retention-days: 5
+```
+## 2 Programmatic Cleanup (GitHub REST API)
+Sometimes you need to delete artifacts immediately after a successful deployment to free up space or remove sensitive binaries.
+
+Example: Delete an artifact via cURL (REST API)
+
+```sh
+# 1. List artifacts to find the ID
+curl -L -H "Authorization: Bearer $TOKEN" \
+  [https://api.github.com/repos/OWNER/REPO/actions/artifacts](https://api.github.com/repos/OWNER/REPO/actions/artifacts)
+
+# 2. Delete the specific artifact
+curl -L -X DELETE -H "Authorization: Bearer $TOKEN" \
+  [https://api.github.com/repos/OWNER/REPO/actions/artifacts/ARTIFACT_ID](https://api.github.com/repos/OWNER/REPO/actions/artifacts/ARTIFACT_ID)
+```
+
+## 3 Advanced Caching (Dependency Management)
+While you know the basics of actions/cache, Domain 5 requires understanding Cache Hits/Misses and Key Optimization.
+
+Cache Hit: The key matches exactly; the folder is restored.
+
+Cache Miss: No match; the workflow must download everything and then save a new cache.
+
+Optimization Strategy:
+Use a "Fallback" key (restore-keys) so that even if your package-lock.json changes slightly, you still get most of your dependencies back.
+
+```yml
+- name: Cache Dependencies
+  uses: actions/cache@v4
+  with:
+    path: ~/.npm
+    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+    restore-keys: |
+      ${{ runner.os }}-node-
+```
+
+## 📊 Strategy Comparison: Cache vs. Artifacts
+
+| Feature | **Caching** (`actions/cache`) | **Artifacts** (`upload-artifact`) |
+| :--- | :--- | :--- |
+| **Purpose** | Speed up the *current* or *future* workflow runs. | Save files for *human* download or *external* use. |
+| **Common Contents** | Dependencies (`node_modules`, `.m2`, `NuGet`). | Binaries, Test Reports, Build Metadata, Logs. |
+| **Lifecycle** | Deleted automatically if not accessed in 7 days. | Retained based on `retention-days` (Default 90). |
+| **Accessibility** | Internal to GitHub Actions only (Scoped by branch). | Downloadable via the UI, API, or GitHub CLI. |
+| **Storage Limit** | **10GB per repository** (FIFO cleanup). | Shared across the Enterprise/Org storage quota. |
+
+## Important
+
+* Cache Limits: Each repository has a 10GB limit for total cache size. If you exceed it, GitHub will delete the oldest caches to make room.
+* Scope: Caches are isolated by branch. A feature branch can access the main branch cache, but the main branch cannot access a feature branch cache (for security).
+* The API: You can manage both Caches and Artifacts via the GitHub CLI: gh cache list and gh cache delete --all.
+
+# ⚡ Scaling and Optimization: High-Performance Workflows
+
+In **Domain 5 (Secure and Optimize Automation)**, the focus is on reducing the "Time to Feedback." For a DevOps engineer, this means running tasks in parallel without hitting resource limits or wasting runner minutes.
+
+## 1. Matrix Strategy (Parallelization)
+Instead of creating three separate jobs for your different environments, use a `matrix`. This spawns multiple jobs simultaneously.
+
+```yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      # 🚀 DOMAIN 5: If one version fails, keep running the others to see the full impact
+      fail-fast: false 
+      matrix:
+        node-version: [18, 20, 22]
+        os: [ubuntu-latest, windows-latest]
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+```
+
+## 2 Concurrency Groups (Resource Protection)
+In your Terraform or Deployment pipelines, you cannot have two jobs running at the same time (it would cause a "State Lock" error in AWS). Concurrency ensures only one run happens at a time.
+
+```yml
+# 🛡️ DOMAIN 5: Cancel any previous runs on the same branch if a new one starts
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: self-hosted # Your Mac Mini
+    steps:
+      - run: terraform apply -auto-approve
+```
+
+## 3 Shallow Clone (Checkout Optimization)
+By default, actions/checkout downloads the entire history of your repository. For a simple build or test, you only need the latest code.
+
+```yml
+steps:
+  - name: Fast Checkout
+    uses: actions/checkout@v4
+    with:
+      # ⚡ DOMAIN 5: Only download the last commit (immense speed gain for large repos)
+      fetch-depth: 1
+```
+
+## 📊 Optimization Strategy Matrix
+
+| Feature | **What it solves** | **DevOps Impact** |
+| :--- | :--- | :--- |
+| **Matrix** | Slow, sequential testing across multiple versions. | **High Speed:** Reduces "Time to Ship" by 3x-5x through parallel execution. |
+| **Concurrency** | Multiple deployments colliding or overlapping. | **Stability:** Prevents Terraform state locks and "Double-Deploy" race conditions. |
+| **Shallow Clone** | Long checkout times, especially on large legacy repositories. | **Efficiency:** Massive reduction in network overhead and runner disk usage. |
+| **Fail-Fast: false** | Stopping the whole run on the first minor error. | **Visibility:** Allows you to see the full impact across all versions in a single run. |
+
+## Important 
+
+* Matrix Limits: You can run up to 256 jobs in a single matrix, but GitHub will only run a certain number in parallel depending on your plan (Free vs. Pro).
+* Include/Exclude: You can use include: to add a specific combination to a matrix (like "Only run Node 22 on macOS") without adding it to the whole grid.
+* Fetch-Depth: If your workflow needs to calculate a version number based on Git Tags, fetch-depth: 1 will break it. You would need fetch-depth: 0 for that specific case.
+
+# 🔑 Security: GITHUB_TOKEN Lifecycle & Granular Permissions
+
+In **Domain 5 (Secure and Optimize Automation)**, the objective is **Least Privilege**. We want every job to have exactly the power it needs—and not a single drop more.
+
+### 1. The GITHUB_TOKEN (The "Smart" Choice)
+Every time a workflow run starts, GitHub automatically creates a unique, temporary installation token called `GITHUB_TOKEN`.
+
+* **Lifecycle (Ephemeral):** The token is created when the job starts and **expires automatically** when the job finishes (or after a maximum of 24 hours).
+* **Security:** If a runner is compromised, the attacker only has a short window to use the token before it becomes useless.
+* **Permissions (Scoped):** By default, in a new organization, this token is **Read-Only**. You must explicitly grant it "Write" access in your YAML.
+
+### 2. Personal Access Tokens (PATs) (The "Legacy" Risk)
+A PAT is tied to a specific **human user**. 
+* **Risk:** If a PAT is leaked, it doesn't expire. An attacker can use it to access *every* repository that user has access to.
+* **Context:** Only use a PAT if your Action needs to reach **outside** its own repository (e.g., to trigger a workflow in a different repo).
+
+---
+
+### 3. Hardening: Granular Permissions
+To follow the "Least Privilege" principle, you should define a `permissions:` block at the top of your workflow or within a specific job.
+
+```yaml
+# 🛡️ DOMAIN 5: Define the baseline at the top
+permissions:
+  contents: read      # Can only see the code, not push to it
+  pull-requests: write # Allows adding comments or labels to PRs
+  id-token: write      # Required for OIDC/AWS connections
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test
+```
+
+## 📊 Comparison: GITHUB_TOKEN vs. Personal Access Token (PAT)
+
+| Feature | **GITHUB_TOKEN** | **Personal Access Token (PAT)** |
+| :--- | :--- | :--- |
+| **Expiration** | **Automatic.** Created at job start; expires when the job finishes. | **Manual.** Set by the user (e.g., 30, 60, 90 days, or "No Expiration"). |
+| **Scope** | **Current Repository only.** Cannot access other private repos in your Org. | **Account-wide.** Accesses any repo the user can see (Higher Risk). |
+| **Management** | **None.** Injected automatically by GitHub; no secrets to store. | **Manual.** Must be stored as a GitHub Secret and rotated manually. |
+| **Triggering** | **Does NOT trigger** subsequent workflows (Prevents infinite loops). | **CAN trigger** other workflows upon code push or PR creation. |
+| **Best Practice** | Used for 90% of CI/CD, testing, and cloud deployments. | Used only for cross-repo tasks or Org-level automation. |
+
+## GITHUB_TOKEN Isolation:
+
+* Every Workflow Run gets a unique token.
+* Every Job within that run uses that same token (unless specified otherwise).
+* Never pass tokens between workflows. Let each workflow use its own ${{ github.token }} to ensure the permissions and expiry match the actual work being done.
+
+## Important
+
+* The "Infinite Loop" Protection: If an Action uses a GITHUB_TOKEN to push code back to the repo, GitHub will not trigger a new workflow run based on that push. This prevents accidental infinite loops. If you want to trigger another workflow, you must use a PAT.
+* Organization Default: In the GitHub UI (Settings -> Actions -> General), you can set the default permission for the token to either "Read/Write" or "Read-Only." Domain 5 recommends setting the default to Read-Only and enabling write access only in the YAML.
+* Environment Secrets: Permissions apply to the token, but they do not bypass Environment Protection rules (like the manual approval you set up earlier).
+
+> Question: "You have a modular workflow system. Should you pass the GITHUB_TOKEN from a caller to a callee?"
+
+* The Answer: No. You should rely on the Callee's own GITHUB_TOKEN.
+
+  * Why? Because GitHub Actions is designed so that every job gets its own fresh, isolated identity. Passing tokens breaks the "Isolation" principle and creates "Race Conditions" where a token might expire while the second workflow is still using it.
+
+## 📂 Cross-Repository Governance: Reusable Workflows
+
+In **Domain 5**, managing how workflows interact across repository boundaries is a key security task. 
+
+### 🔑 The Golden Rule of Tokens
+When **Repo A** calls a Reusable Workflow in **Repo B**, the `GITHUB_TOKEN` belongs to **Repo A** (the Caller).
+
+* **Access to Repo A:** Automatic (based on permissions in Repo A's YAML).
+* **Access to Repo B:** **Denied.** The token is scoped only to the repository where the event was triggered.
+
+### 🛠️ Example: Accessing the Caller's Code
+If you want a shared workflow (Repo B) to build the code in your project (Repo A):
+
+**The Calls (From repo A to repo b):**
+```yaml
+jobs:
+  call-shared-logic:
+    permissions:
+      contents: read # 🛡️ Grant the token permission to read Repo A
+    uses: C11R11/repo-b/.github/workflows/reusable.yml@main
+
+# Then in the reusable.yml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo A
+        uses: actions/checkout@v4 # 💡 Uses Repo A's token automatically
+```
+
+### What if you need to access Repo B too?
+If your script in Repo B needs to download a private tool or secondary code from itself (Repo B), the GITHUB_TOKEN will fail. You must pass a Secret (PAT or GitHub App Token) to the reusable workflow.
+
+The "Secure" Implementation:
+
+```yml
+# In Repo A (Caller)
+jobs:
+  call-shared:
+    uses: C11R11/repo-b/.github/workflows/reusable.yml@main
+    secrets:
+      # 🔐 Pass a PAT that has access to Repo B
+      REPO_B_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+```
