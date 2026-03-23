@@ -245,6 +245,9 @@ sudo ./svc.sh start
 # Check service status
 sudo ./svc.sh status
 
+#Disable automatic updates
+./config.sh --url <URL> --token <TOKEN> --disableupdate
+
 ```
 
 ## Runner software information
@@ -321,3 +324,52 @@ The Trap: This is a "Magic" feature of GitHub. The Runner Agent automatically up
 A: In the .env file in the runner's root directory.
 
 The Trap: While using "gh variable set" in the org works at the GitHub Actions level, the question asked how to set it for every job that runs on your Mac Mini specifically. If you have two different runners (one Mac, one Linux), and only the Mac needs NODE_ENV=production, you put it in a .env file inside the runner folder. The runner loads this file into the environment before every job.
+
+12. You're using ephemeral runners in containers for your GitHub Actions workflows. However, you've noticed that these runners repeatedly update whenever a new runner version is released, causing disruptions. What action can you take to address this issue?
+
+A: Disable automatic updates 
+
+14. What happens if a job is not approved within 30 days while awaiting review in a workflow?
+
+15. Your team manages its own infrastructure costs using a chargeback model and wants to ensure that development workflows do not utilize the runners paid for by your team. Which GitHub Actions feature can help achieve this goal?
+
+6. You want to limit the use of public actions and reusable workflows so that people can only use reusable workflows in your enterprise. Where would this be configured?
+
+A: In the Policies section for the targeted enterprise for your organization
+
+```text
+Configuring the limitation of public actions and reusable workflows to only be used within your enterprise would be done in the Policies section for the targeted enterprise for your organization. This setting allows you to define and enforce specific policies and restrictions related to GitHub Actions usage within your organization.
+
+https://docs.github.com/en/enterprise-cloud@latest/admin/policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-github-actions-in-your-enterprise
+
+https://docs.github.com/en/enterprise-cloud@latest/admin/policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-github-actions-in-your-enterprise#allowing-select-actions-and-reusable-workflows-to-run
+
+```
+
+7. You have created a secret named api_key to use in a workflow that deploys a new application. Which of the following is the correct syntax to reference the secret as an environment variable?
+
+A: 
+```yml
+steps:
+  - shell: bash
+    env:
+      ENV_API_KEY: ${{ secrets.api_key }}
+    run: |
+      ./app_install.sh
+```
+
+```text
+The correct syntax to reference a secret as an environment variable in a GitHub Actions workflow is to use the `${{ secrets.secret_name }}` syntax. In this case, the secret named api_key is referenced as `${{ secrets.api_key }}` within the `env` section of the workflow step. This allows the secret value to be securely accessed and used as an environment variable during the workflow execution.
+
+https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-environment
+```
+16. Your organization uses a self-hosted runner deployed within a network that requires a proxy server for internet access. Which environment variable should you configure on the runner to ensure it can successfully communicate with GitHub?
+
+A: https_proxy
+
+```text
+The `https_proxy` environment variable should be configured on the self-hosted runner to specify the proxy server that should be used for HTTPS requests. This ensures that the runner can successfully communicate with GitHub over HTTPS through the proxy server.
+
+https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/using-a-proxy-server-with-self-hosted-runners
+
+```

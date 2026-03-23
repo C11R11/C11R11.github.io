@@ -191,3 +191,25 @@ Inside the `.github` repo, you need three files for every template you want to o
 2.  **Permissions:** You must have **Write** access to the repository to disable or delete workflows.
 3.  **API/CLI:** You can disable workflows via the GitHub CLI: `gh workflow disable <id>`.
 4.  **Retention:** Deleting a workflow is the fastest way to free up storage space used by old artifacts (though setting a shorter retention policy is the "professional" way to do it).
+
+## QUestions
+
+1. What status should you filter on to see only failed workflow runs on the GitHub Actions tab?
+
+A: failure
+
+```text
+Filtering on "failure" will show only the workflow runs that have failed specifically. This is the correct status to filter on if you want to see only the failed workflow runs on the GitHub Actions tab.
+
+https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/using-workflow-run-logs
+```
+2. Which API does GitHub Actions use to output statuses, results, and logs for a workflow?
+
+A: Checks API
+
+```text
+The Checks API is the correct choice because GitHub Actions use this API to output statuses, results, and logs for a workflow. It allows workflows to create detailed status checks, annotations, and summaries for each job and step in the workflow, providing visibility into the execution and results of the workflow.
+
+https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/using-workflow-run-logs
+https://docs.github.com/en/rest/checks?api
+```

@@ -94,6 +94,8 @@ When your script generates a sensitive value at runtime, you must register it wi
 echo "::add-mask::$DYNAMIC_TOKEN"
 ```
 
+## Secrets access in a environment
+
 ---
 
 #### 🎓 GH-200 Exam Scenarios
@@ -811,4 +813,11 @@ A: It only download the last commit, reducing build time and disk usage.
 
 A: fail-fast:false 
 
+```text
 Disabling fail-fast ensures that all matrix combinations complete their run refardless of individual failures
+```
+
+4. What is required to manually run a private repository’s workflow using the GitHub REST API?
+
+5. Your operations team plans to use GitHub-hosted runners for continuous integration tasks, but the security team insists on implementing an IP address allowlist to enhance security measures. Why might this approach be considered cumbersome for your operations team?
+

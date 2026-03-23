@@ -718,3 +718,57 @@ You must write to the **"Magic Files"** because those files live on the Runner's
  16. You want to conditionally run a step in a Composite action only if a previous step in that same action failed. How do you check the status of a specific step inside action.yml?
 
  ![alt text](image-15.png)
+
+17. You are building a new custom action and must pass data from one step to subsequent steps in a GitHub Actions workflow. Which key should you use in the action's metadata syntax?
+
+A: Outputs
+
+The correct key to use in the action's metadata syntax for passing data from one step to subsequent steps in a GitHub Actions workflow is 'outputs'. This key allows you to define output parameters in your custom action that can be used by other steps in the workflow.
+
+```text
+If the question mentions "Metadata" or "action.yml", the answer is almost always inputs or outputs.
+
+If the question mentions "Shell Script" or "Workflow Run", the answer is usually $GITHUB_OUTPUT or $GITHUB_ENV.
+
+https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
+```
+
+18. How can you access an environment variable corresponding to an input in a Docker container action?
+
+A: use the args keyword in the action metadata file to pass the input to the Docker container
+
+```text
+Using the args keyword in the action metadata file allows you to pass the input value as an argument to the Docker container. This argument can then be accessed within the container as an environment variable, enabling you to retrieve the corresponding input value efficiently.
+
+https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#example-specifying-inputs
+```
+
+19. You are trying to run a new Docker container action but getting a permission denied error when running the entrypoint.sh script. How can you resolve this?
+
+A: modify the entrypoint.sh script to explicitly set executable permissions before running
+
+```text
+Modifying the entrypoint.sh script to explicitly set executable permissions before running will resolve the permission denied error. By setting the executable permissions, the script will be allowed to run as intended within the Docker container action.
+
+https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions
+```
+
+20. What information is essential when drafting a new release and publishing an action to GitHub Marketplace?
+
+A: the action’s metadata file’s category must match an existing GitHub Marketplace category
+
+```text
+When drafting a new release and publishing an action to GitHub Marketplace, it is essential that the action's metadata file's category matches an existing GitHub Marketplace category. This ensures that the action is listed in the correct category for users to discover and use effectively.
+
+https://docs.github.com/en/actions/creating-actions/publishing-actions-in-github-marketplace
+```
+
+21. What capability does GitHub provide to enable runners to download actions from internal or private repositories, ensuring access control and security?
+
+A: GitHub creates a scoped installation token with read access to the repository, automatically expiring after one hour
+
+```text
+GitHub provides runners with a scoped installation token that has read access to the repository where the actions are stored. This token is automatically generated and expires after one hour, ensuring access control and security by limiting the duration of access to the actions.
+
+https://docs.github.com/en/actions/creating-actions/sharing-actions-and-workflows-with-your-organization
+```
