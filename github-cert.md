@@ -9,11 +9,11 @@
 
 # Notes
 
-* [Domain 1 - Author and Manage Workflows (20–25%)](github-cert-domain1.md) - Domain 1
-* [Domain 2 - Consume and Troubleshoot Workflows (15–20%)](github-cert-domain2.md) - Domain 2
-* [Domain 3 - Author and Maintain Actions (15–20%)](github-cert-domain3.md) - Domain 3
-* [Domain 4 - Manage GitHub Actions for the Enterprise (20–25%)](github-cert-domain4.md) - Domain 4
-* [Domain 5 - Secure and Optimize Automation (10–15%)](github-cert-domain5.md) - Domain 5
+* [Domain 1 - Author and Manage Workflows (20–25%)](github-cert-domain1.md)
+* [Domain 2 - Consume and Troubleshoot Workflows (15–20%)](github-cert-domain2.md)
+* [Domain 3 - Author and Maintain Actions (15–20%)](github-cert-domain3.md)
+* [Domain 4 - Manage GitHub Actions for the Enterprise (20–25%)](github-cert-domain4.md)
+* [Domain 5 - Secure and Optimize Automation (10–15%)](github-cert-domain5.md)
 
 # 🎓 GitHub Actions (GH-200) Certification Domains (2026)
 

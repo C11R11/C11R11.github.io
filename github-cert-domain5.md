@@ -817,7 +817,3 @@ A: fail-fast:false
 Disabling fail-fast ensures that all matrix combinations complete their run refardless of individual failures
 ```
 
-4. What is required to manually run a private repository’s workflow using the GitHub REST API?
-
-5. Your operations team plans to use GitHub-hosted runners for continuous integration tasks, but the security team insists on implementing an IP address allowlist to enhance security measures. Why might this approach be considered cumbersome for your operations team?
-
