@@ -472,10 +472,10 @@ when dealing with resource-intensive tasks
 Explanation
 Using a combination of GitHub-hosted and self-hosted runners can be beneficial when dealing with resource-intensive tasks. GitHub-hosted runners may have limitations in terms of resources, so adding self-hosted runners with higher capabilities can help handle tasks that require more processing power or memory.
 
-https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners
-https://docs.github.com/en/actions/hosting-your-own-run
-
 ```
+
+[https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners)
+[https://docs.github.com/en/actions/hosting-your-own-run]()
 
 7. Which default environment variables cannot be overwritten using the GITHUB_ENV file in a workflow?
 
@@ -484,9 +484,9 @@ A: GITHUB_* and RUNNER_*
 ```text
 The default environment variables starting with "GITHUB_" and "RUNNER_" cannot be overwritten using the GITHUB_ENV file in a workflow. These variables are reserved and cannot be modified to maintain the integrity and security of GitHub Actions workflows.
 
-https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
-
 ```
+
+[https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable)
 
 8. Which of the following statements accurately describes the syntax rules for indentation in YAML used for defining workflow jobs in GitHub Actions?
 
@@ -495,5 +495,6 @@ A: YAML allows significant newlines and indentation, similar to Python, but unli
 ```text
 YAML syntax for defining workflow jobs in GitHub Actions allows significant newlines and indentation, similar to Python. However, unlike Python, YAML prohibits the use of literal tab characters for indentation. This rule ensures consistency and readability in YAML files.
 
-https://learnxinyminutes.com/docs/yaml/
 ```
+[https://learnxinyminutes.com/docs/yaml/](https://learnxinyminutes.com/docs/yaml/)
+
