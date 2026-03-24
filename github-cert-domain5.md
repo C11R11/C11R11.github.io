@@ -30,6 +30,13 @@ Even though you won't configure environments inside the external repo, you use i
 
   * The Test: Try to open a PR from ExternalRepo to test-repo. You will see a yellow bar saying "Approval required to run workflows." This is a massive part of Domain 5 compliance.
 
+## Hardening for self-hosted runners
+
+Self-hosted runners for GitHub do not have guarantees around running in ephemeral clean virtual machines, 
+and can be persistently compromised by untrusted code in a workflow.
+
+[reference](https://docs.github.com/en/actions/reference/security/secure-use#hardening-for-self-hosted-runners)
+
 ## Environment Gates
 
 ### The Environment as a "Security Container"
@@ -684,7 +691,7 @@ steps:
 
 ## Important 
 
-* Matrix Limits: You can run up to 256 jobs in a single matrix, but GitHub will only run a certain number in parallel depending on your plan (Free vs. Pro).
+* Matrix Limits: You can run up to **256** jobs in a single matrix, but GitHub will only run a certain number in parallel depending on your plan (Free vs. Pro).
 * Include/Exclude: You can use include: to add a specific combination to a matrix (like "Only run Node 22 on macOS") without adding it to the whole grid.
 * Fetch-Depth: If your workflow needs to calculate a version number based on Git Tags, fetch-depth: 1 will break it. You would need fetch-depth: 0 for that specific case.
 
@@ -698,6 +705,18 @@ Every time a workflow run starts, GitHub automatically creates a unique, tempora
 * **Lifecycle (Ephemeral):** The token is created when the job starts and **expires automatically** when the job finishes (or after a maximum of 24 hours).
 * **Security:** If a runner is compromised, the attacker only has a short window to use the token before it becomes useless.
 * **Permissions (Scoped):** By default, in a new organization, this token is **Read-Only**. You must explicitly grant it "Write" access in your YAML.
+
+**Maximum liferime**
+
+The effective maximum lifetime of the token depends on the type of runner:
+
+* GitHub-hosted runners The maximum job execution time is **6 hours**, so the GITHUB_TOKEN can live for a **maximum of 6 hours**.
+
+* Self-hosted runners **The maximum job execution time is 5 days**. However, because the GITHUB_TOKEN is an installation access token, **it can only be refreshed for up to 24 hours**. If your job runs longer than 24 hours, use a personal access token or other authentication method instead.
+
+
+
+[GITHUB_TOKEN reference](https://docs.github.com/en/actions/concepts/security/github_token)
 
 ### 2. Personal Access Tokens (PATs) (The "Legacy" Risk)
 A PAT is tied to a specific **human user**. 

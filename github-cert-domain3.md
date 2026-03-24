@@ -466,6 +466,12 @@ runs:
 
 In GitHub Actions, "Workflow Commands" are how your scripts (Bash/JS) communicate with the Runner to set outputs, variables, or UI annotations.
 
+[About workflow commands](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#about-workflow-commands)
+
+> Workflow command and parameter names are case insensitive.
+
+> If you are using Command Prompt, omit double quote characters (") when using workflow commands.
+
 ### 1. The Modern Standard (Environment Files)
 As of late 2022, GitHub moved from `stdout` commands to **File-based commands** for security and reliability. These are now the production standard.
 
@@ -657,6 +663,69 @@ You must write to the **"Magic Files"** because those files live on the Runner's
 
 * `echo "FOO=bar" >> $GITHUB_ENV` → Runner reads this file after Step 1 and injects it into the shell for Step 2.
 
+# Runners 
+
+[Self-hosted runners reference](https://docs.github.com/en/actions/concepts/runners/self-hosted-runners)
+
+## Gihub-hosted
+
+[Gihub-hosted runners reference](https://docs.github.com/en/actions/concepts/runners/github-hosted-runners)
+
+```text
+Each runner comes with the runner application and other tools preinstalled. GitHub-hosted runners 
+are available with Ubuntu Linux, Windows, or macOS operating systems. When you use a GitHub-hosted runner, 
+machine maintenance and upgrades are taken care of for you.
+```
+
+
+* With the exception of single-CPU runners, each GitHub-hosted runner is a new virtual machine (VM) hosted by GitHub
+
+***Single CPU runners***
+
+* ubuntu-slim runners execute Actions workflows in Ubuntu Linux, inside a container rather than a full VM instance
+* These runners—specified using the workflow label ubuntu-slim—offer a lower-cost option for running lightweight operations
+* When the job begins, GitHub automatically provisions a new container for that job. All steps in the job execute in the container, allowing the steps in that job to share information using the runner's file system
+* The job timeout for single-CPU runners is 15 minutes. If a job reaches this limit, the job is terminated and fails.v
+
+```text
+The container for ubuntu-slim runners runs in unprivileged mode. This means that some operations requiring elevated privileges—such as mounting file systems, using Docker-in-Docker, or accessing low-level kernel features—are not supported.
+
+A minimal set of tools is installed on the ubuntu-slim runner image, appropriate for lightweight tasks.
+```
+
+[Single-CPU runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#single-cpu-runners)
+
+**Larger runners**
+
+* Only for Github Team or Enterprise
+* Acces to more powerfull runners
+* They can have an static ip 
+* They can group runners
+* They can auto scale
+
+[Larger runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#larger-runners)
+
+>Who can use this feature?
+>
+>Enterprise accounts, organizations owned by enterprise accounts, and organizations using GitHub Team or GitHub Free plans can create and manage additional >runner groups using self-hosted runners.
+>
+>[Managing access to self-hosted runners using groups](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/manage-access#moving-a-self-hosted-runner-to-a-group)
+
+## Giving access to a runner group
+
+This can be by telling which repos have acces, or if all repos have access
+
+```text
+There is no guarantee that self-hosted runners for GitHub will be hosted on ephemeral, clean virtual machines. 
+As a result, they may be compromised by untrusted code in a workflow.
+```
+
+**Public Repositories**
+
+If you use the option that allows public repositories to access the runner group, there's a security risk involved (with fork).
+
+[Limiting the use of self-hosted runners](Limiting the use of self-hosted runners)
+
 # QUIZ FAILS
 
 1. You are migrating a legacy Bash script to a modern GitHub Action. Which command should you use to pass a value to subsequent steps?
@@ -775,3 +844,84 @@ the actions are stored. This token is automatically generated and expires after 
 and security by limiting the duration of access to the actions.
 ```
 [https://docs.github.com/en/actions/creating-actions/sharing-actions-and-workflows-with-your-organization](https://docs.github.com/en/actions/creating-actions/sharing-actions-and-workflows-with-your-organization)
+
+22. Rather than using code to create an error annotation, what can you use to send commands to the runner to create the same error annotation?
+
+A: workflow commands provided by the actions/toolkit
+
+23. You are a developer working on a project hosted on GitHub, and you've created a custom action to automate the process of deploying your application to a staging environment. The action is designed to run in a Docker container and requires several input variables to function correctly. This action could benefit other developers in the GitHub community and want to share it. What steps should you take to share your custom action with the GitHub community?
+
+> ensure your repository is public, define the action's inputs, outputs, and environment variables, and publish the action as a Docker container
+
+23. While executing a GitHub Actions workflow, you encounter an issue where one of the actions fails unexpectedly. How does GitHub interpret the exit code of an action?
+
+GitHub interprets a zero exit code as success, indicating that the action was completed successfully and other tasks can proceed
+
+```text
+GitHub interprets a zero exit code as success because it indicates that the action was completed successfully without any errors. This allows the workflow to proceed to the next tasks in the sequence.
+```
+
+[Setting exit codes for actions](https://docs.github.com/en/actions/how-tos/create-and-publish-actions/set-exit-codes)
+
+24. When setting up a GitHub Actions workflow, which of the following components are required? (select three)
+
+A1: workflow file in YAML format
+A2: trigger events to initiate the workflow
+A3: action metadata file
+
+```text
+Workflow: Needs on:, jobs:, and a .yml file. No metadata.
+
+Custom Action: Needs inputs:, outputs:, and an action.yml (Metadata). No triggers.
+```
+
+25. What is the primary purpose of an automated release management strategy?
+
+A: prioritize security by only committing dependencies to tagged release commits and performing builds during a release
+
+```text
+The primary purpose of an automated release management strategy is to prioritize security by ensuring that only dependencies are committed to tagged release commits. By performing builds during a release, the strategy helps maintain a secure and stable codebase by ensuring that only approved changes are included in the release.
+```
+
+26. Your development team frequently executes steps involving setting up environments, running tests, and deploying applications across various workflows in GitHub Actions. However, configuring these steps individually in each workflow has become cumbersome and repetitive. Which feature of GitHub Actions can help streamline this process?
+
+create composite actions to combine multiple workflow steps into a single reusable action
+
+```text
+Creating composite actions allows you to combine multiple workflow steps into a single reusable action. This 
+helps streamline the process by reducing the need to configure the same steps individually in each workflow. 
+By creating composite actions, you can centralize and reuse common steps across different workflows, making 
+the overall configuration more efficient and less repetitive.
+
+If the question asks about "Streamlining" or "Reducing Repetition" of common steps $\rightarrow$ Composite Action.
+If the question asks about "Extending functionality" or "Complex algorithms" $\rightarrow$ JavaScript Action.
+If the question asks about "OS isolation" or "Custom Environments" $\rightarrow$ Docker Action.
+```
+
+27. Why is it important to ensure that the repository only includes the metadata file, code, and files necessary for the action?
+
+A: to package the action in a single unit for tagging and releasing
+
+```text
+Packaging the action in a single unit with only the necessary files ensures that the action can be easily tagged 
+and released as a standalone component. This simplifies the process of versioning and distributing the action to
+ users, making it more manageable and maintainab
+
+When a workflow says uses: your-user/your-action@v1, the GitHub runner performs a shallow clone of that 
+repository onto the runner's disk.
+
+DevOps engineers often use a .githubignore or a build step to strip everything except the "Single Unit" before 
+pushing the final release tag.
+
+```
+
+28. What considerations should be made when developing JavaScript actions for GitHub Actions to ensure compatibility with all GitHub-hosted runners?
+
+A: write the JavaScript code to be pure JavaScript and not dependent on other binaries to ensure compatibility with all GitHub-hosted runners
+
+```text
+Writing the JavaScript code to be pure JavaScript and not dependent on other binaries ensures compatibility 
+with all GitHub-hosted runners, as these runners may have different configurations and dependencies. 
+By keeping the code pure JavaScript, you eliminate the risk of compatibility issues related to external dependencies.
+```
+

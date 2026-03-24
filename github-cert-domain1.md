@@ -48,6 +48,8 @@ GitHub uses a five-field format (UTC time) to schedule workflows.
 * * * * *
 ```
 
+[On schedule reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onschedule)
+
 | Frequency | Cron Expression | Notes |
 | :--- | :--- | :--- |
 | **Every 15 Minutes** | `*/15 * * * *` | Great for frequent polling or small checks. |
@@ -139,6 +141,41 @@ The run: echo "TODAY=$(date +%Y-%m-%d)" >> $GITHUB_ENV generates a new or update
 # Anchors and aliases
 
 > You can use YAML anchors and aliases to reduce repetition in your workflows. An anchor (marked with &) identifies a piece of content that you want to reuse, while an alias (marked with *) repeats that content in another location.
+
+```text
+Anchors and aliases
+
+There are 2 parts to this:
+- The anchor '&' which defines a chunk of configuration
+- The alias '*' used to refer to that chunk elsewhere
+```
+
+```yml
+definitions: 
+  steps:
+    - step: &build-test
+        name: Build and test
+        script:
+          - mvn package
+        artifacts:
+          - target/**
+pipelines:
+  branches:
+    develop:
+      - step: *build-test
+    main:
+...
+
+# You can use overrides with the characters '<<:' to add more values, or override existing ones.
+    main:
+      - step: 
+          <<: *build-test
+          name: Testing on Main
+```
+> YAML anchors and aliases cannot contain the ' [ ', ' ] ', ' { ', ' } ', and ' , ' characters.
+
+[yaml anchors and aliases reference](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/)
+
 
 ### 🔄 Reusability: Anchors vs. Composite Actions
 
@@ -401,6 +438,8 @@ As a DevOps Engineer, you must track image deprecations to prevent "Pipeline Rot
 | **`steps`** | Status and outputs from steps already executed in the current job. | `steps.step_id.outputs.my_output`, `steps.step_id.outcome` |
 | **`strategy`** | Information about the matrix execution strategy. | `strategy.job-index`, `strategy.job-total` |
 
+
+
 **Github Context**
 
 [Contexts reference](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#available-contexts)
@@ -447,22 +486,45 @@ In GitHub Actions, managing data efficiently depends on understanding where the 
 ---
 *Note: Caches are automatically deleted if they haven't been accessed in 7 days.*
 
+## Environment variables
+
+
+
+
+```sh
+echo "{environment_variable_name}={value}" >> "$GITHUB_ENV"
+```
+
+
+```text
+To avoid issues, it's good practice to treat environment variables as case sensitive, irrespective of 
+the behavior of the operating system and shell you are using.
+```
+
+
+
+## Environment files
+
+During the execution of a workflow, the runner generates temporary files that can be used to perform certain actions.
+
+[](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#environment-files)
+
 
 # QUIZ FAILS
 
-1. In a private repository, why are workflow badges not accessible externally?
+1. In a private repository, why are workflow badges not accessible externally
+
+A: to prevent external embedding or linking from unauthorized sources
+
+[https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/adding-a-workflow-status-badge](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/adding-a-workflow-status-badge)
 
 2. What is the minimum time granularity available for scheduling GitHub Actions?
 
-3. Which API does GitHub Actions use to output statuses, results, and logs for a workflow?
+A: five minutes
 
-4. Which of the following statements accurately describes the syntax rules for indentation in YAML used for defining workflow jobs in GitHub Actions?
+> The shortest interval you can run scheduled workflows is once every 5 minutes.
 
-Yamls is similar to python, but don't allow tabs
-
-5. What additional steps does GitHub add to each job in a workflow run?
-
-Setup and Complete job
+[reference](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onschedule:~:text=The%20shortest%20interval%20you%20can%20run%20scheduled%20workflows%20is%20once%20every%205%20minutes.)
 
 6. When might it be appropriate to use a combination of GitHub-hosted and self-hosted runners in a workflow?
 
@@ -471,11 +533,10 @@ when dealing with resource-intensive tasks
 ```text
 Explanation
 Using a combination of GitHub-hosted and self-hosted runners can be beneficial when dealing with resource-intensive tasks. GitHub-hosted runners may have limitations in terms of resources, so adding self-hosted runners with higher capabilities can help handle tasks that require more processing power or memory.
-
 ```
 
 [https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners)
-[https://docs.github.com/en/actions/hosting-your-own-run]()
+[https://docs.github.com/en/actions/hosting-your-own-run](https://docs.github.com/en/actions/hosting-your-own-run)
 
 7. Which default environment variables cannot be overwritten using the GITHUB_ENV file in a workflow?
 
@@ -499,3 +560,89 @@ This rule ensures consistency and readability in YAML files.
 ```
 [https://learnxinyminutes.com/docs/yaml/](https://learnxinyminutes.com/docs/yaml/)
 
+9. How can you specify dependencies between jobs in a workflow?
+
+A: by defining dependencies in the workflow YAML file
+
+10. What action should be taken if you want to find the expiration date of a specific artifact?
+
+execute a specific API call to retrieve the expiration date
+
+```text
+To find the expiration date of a specific artifact in GitHub Actions, you need to execute a specific API call that retrieves the expiration date information. This API call will provide you with the necessary details about when the artifact will expire, allowing you to manage it effectively.
+```
+
+11. What is the recommended practice for treating environment variables in GitHub Actions, regardless of the operating system and shell used?
+
+A: treat environment variables as case-sensitive
+
+12. What is the primary purpose of using workflow commands as a run step in a GitHub Actions workflow?
+
+A: to communicate instructions and information to the runner environment
+
+13. What is the recommended approach for storing secrets larger than 48 KB?
+
+use a workaround involving encryption with GPG and storing the decryption passphrase as a secret
+
+```text
+
+Using a workaround involving encryption with GPG and storing the decryption passphrase as a secret is the recommended 
+approach for storing secrets larger than 48 KB. This method allows you to securely store and access large secrets while 
+maintaining the necessary security measures.
+
+To use secrets that are larger than 48 KB, you can use a workaround to store secrets in your repository 
+and save the decryption passphrase as a secret on GitHub. For example, you can use gpg to encrypt a 
+file containing your secret locally before checking the encrypted file in to your repository on GitHub
+```
+
+[Storing large secrets](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets#limits-for-secrets)
+
+
+14. What is the purpose of the timeout-minutes keyword in a step?
+
+A: it defines the time interval for individual commands within a step
+
+```text
+The timeout-minutes keyword is not related to defining the time interval for individual commands 
+within a step. It specifically controls the maximum duration for the entire step to run, rather than 
+setting time intervals for specific commands.
+```
+
+> The maximum number of minutes to let a job run before GitHub automatically cancels it. Default: 360
+
+[jobs.<job_id>.timeout-minutes](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idtimeout-minutes)
+
+15. In which scenario is using GitHub-hosted runners more suitable?
+
+```text
+when you leverage the resources provided by GitHub for continuous integration
+```
+
+16. What is the purpose of the jobs.<job_id>.runs-on configuration in a GitHub Actions workflow?
+
+A: specifies the operating system and virtual environment for job execution
+
+```text
+Why the "Virtual Environment" is the "Right" Answer
+
+The Machine: This refers to the hardware (CPU, RAM, OS).
+The Virtual Environment: This refers to the software image (the "Virtual Image") that is loaded onto that machine.
+```
+
+[jobs.<job_id>.runs-on](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idruns-on)
+
+17. What distinguishes YAML syntax from JSON when configuring workflow jobs in GitHub Actions?
+
+A: YAML allows significant newlines and indentation
+
+```text
+YAML syntax distinguishes itself from JSON by allowing significant newlines and indentation. 
+This feature makes YAML more human-readable and easier to work with, especially when configuring
+workflow jobs in GitHub Actions where proper indentation is crucial for defining the structure of the workflow.
+```
+
+18. Which statement accurately describes the accessibility of default environment variables?
+
+A: default environment variables are set by GitHub are are available at every step in a workflow
+
+> The env context only contains variables you defined in the YAML.

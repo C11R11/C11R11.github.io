@@ -1,13 +1,5 @@
 [Github cert](github-cert.md)
 
-# 🗺️ Architecture Mapping (GH-200 to Industry)
-
-When I learned the GH-200, I focused on architectural patterns that are platform-agnostic:
-
-1. **The Orchestration Pattern:** Centralizing logic to reduce "YAML sprawl" in application repos (Called 'Reusable Workflows' in GH, 'Parent-Child Pipelines' in GitLab).
-2. **Immutable Infrastructure:** Ensuring builds are reproducible by using Docker-based actions and SHA-pinned dependencies.
-3. **Automated Governance:** Using compliance gates to ensure security scans run automatically, regardless of the platform’s specific runner type.
-
 # Domain 4: Enterprise Management
 
 ## 🛡️ SHA Policy Inheritance & Recursive Enforcement
@@ -157,6 +149,8 @@ If you have to manage more than **one** file in a remote repository, your abstra
 * **Groups:** Identify *permissions* (e.g., "Only the Prod Repo can access this group").
 * **Ephemeral Flag:** `--ephemeral`. Runner unregisters immediately after **one** job. 
 * **Auto-Update:** Runners update themselves automatically when idle.
+
+
 
 ## 5. Billing & Multipliers
 * **Linux:** 1.0x
@@ -376,3 +370,85 @@ server that should be used for HTTPS requests. This ensures that the runner can 
 over HTTPS through the proxy server.
 ```
 [https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/using-a-proxy-server-with-self-hosted-runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/using-a-proxy-server-with-self-hosted-runners)
+
+17. A new self-hosted runner was recently registered with your organization, but you don't see it in the runner group assigned to your team. Why can't you use the new runner?
+
+A: new runners are automatically assigned to a default group, therefore it needs to be moved to the group used by your team
+
+```text
+If you don't specify a runner group during the registration process, your new runners are automatically assigned to the default group, and can then be moved to another group.
+```
+[Moving a self-hosted runner to a group](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/managing-access-to-self-hosted-runners-using-groups#moving-a-self-hosted-runner-to-a-group)
+
+18. Your organization requires IP allowlists to protect internal resources accessed by GitHub Actions workflows. Most of your workflows run on GitHub-hosted runners, with both Windows and macOS needs. How can you achieve this desired security while ensuring workflow reliability?
+
+utilize large runners with static IP address ranges and add these ranges to the allowlist
+
+```text
+Utilizing large runners with static IP address ranges allows you to easily add these ranges to the IP allowlist for internal resources. This ensures that only workflows running on these specific runners can access the protected resources, providing the desired security measures while maintaining workflow reliability.
+```
+
+19. You have created a YAML workflow file for a common task for your team's testing. However, you are unsure where to store it in your organization. Where do the workflow file and associated metadata file need to be placed?
+
+in the .github/workflows directory within the repository where the task will be executed
+
+```text
+The correct placement for workflow files and associated metadata files is within the .github/workflows directory within the repository where the task will be executed. This directory is specifically designed for storing GitHub Actions workflow files, making it easy to manage and access them within the context of the repository.
+```
+
+> If the exam asks for a directory path, the answer is almost always .github/workflows/.
+
+20. April is in charge of auditing the operations team. While conducting a review, she noticed that many workflows are accessing secrets to carry out deployment and testing functions and is concerned that these secrets may appear in logs. What information can you provide to alleviate April's concerns about workflow logs?
+
+GitHub automatically redacts secrets printed to workflow logs, replacing them with placeholders
+
+```text
+GitHub automatically redacts secrets printed to workflow logs, replacing them with placeholders. This feature ensures
+that sensitive information such as secrets are not exposed in plain text within the logs, mitigating the risk of 
+unauthorized access to confidential data.
+
+The exam is testing if you understand the difference between Confidentiality (Encryption) and Masking (Redaction).
+```
+
+21. Your development team is troubleshooting connectivity issues with a self-hosted runner. What parameter can be used to validate that a self-hosted runner can access all required network services on GitHub?
+
+A: --check
+
+```text
+The --check parameter is used to validate that a self-hosted runner can access all required network services on GitHub. 
+It checks connectivity and ensures the runner can communicate effectively with the necessary services.
+```
+
+22. You are collaborating with a colleague using their repository in GitHub, but you are having trouble adding a secret for a workflow. What action is required to resolve the issue?
+
+A: request your colleague, who is the repository owner, to add the secret to the workflow
+
+```text
+GH-200 Exam Tip: "The Hierarchy of Permission"
+If a question involves Secrets, Runner Groups, or Environments, and you are a "Collaborator":
+
+Can you do it yourself? No.
+
+Can you bypass it? (Forking/Moving). The exam will almost always count this as incorrect.
+
+Should you ask an Admin/Owner? YES. This is the "correct" architectural path.
+```
+
+23. When establishing corporate standards for managing GitHub Actions workflows within a large organization, which of the following elements are essential to document for optimal clarity and organization? (select three)
+
+A1: plans for ongoing maintenance and version control of workflows
+A2: repositories used for storing different workflow components
+A3: naming conventions for files and folders within workflows
+
+24. Your development team is responsible for deploying your organization's flagship application, which requires custom software tools for deployment. What type of runner would be ideal for this environment?
+
+A: self-hosted runners on virtual machines managed by the organization
+
+
+```text
+If a question asks about "Ideal Environments" for custom tools, look for these keywords:
+
+Virtual Machine / VM Image: For heavy, complex custom tools.
+Container / Docker: For lightweight custom tools.
+Self-hosted (Virtual): If the tools are proprietary and can't be on GitHub-hosted runners.
+```

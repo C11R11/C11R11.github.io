@@ -1,13 +1,13 @@
 # 🎯 Checklist de Preparación: GitHub Actions Certification (GH-200)
 
 * [Github](cli-github.md) - Github
-* [Github actions](github-actions.md) - Github actions
-* [GH-200 checklist](github-cert-checklist.md) - GH-200: GitHub Actions Certification Checklist
-* [Semantic versioning](semantic-versioning)
+* [Semantic versioning](github-cert-semantic-versioning.md)
 * [Branching strategies](github-branching-strategies.md)
 * [Full gitops CICD pipeline description](github-gitops.md)
 
-# Notes
+# Notes and checklist
+
+**[GH-200 checklist](github-cert-checklist.md) - GH-200: GitHub Actions Certification Checklist**
 
 * [Domain 1 - Author and Manage Workflows (20–25%)](github-cert-domain1.md)
 * [Domain 2 - Consume and Troubleshoot Workflows (15–20%)](github-cert-domain2.md)

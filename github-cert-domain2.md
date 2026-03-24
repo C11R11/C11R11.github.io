@@ -216,3 +216,36 @@ and step in the workflow, providing visibility into the execution and results of
 
 [using-workflow-run-logs](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/using-workflow-run-logs)
 [https://docs.github.com/en/rest/checks?api](https://docs.github.com/en/rest/checks?api)
+
+3. What additional steps does GitHub add to each job in a workflow run?
+
+Setup and Complete job
+
+```text
+In addition to the steps configured in the workflow file, GitHub adds two additional 
+steps to each job to set up and complete the job's execution. These steps are logged 
+in the workflow run with the names "Set up job" and "Complete job".
+```
+
+[viewing-logs-to-diagnose-failures](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/using-workflow-run-logs#viewing-logs-to-diagnose-failures)
+
+4. What will occur if the .github/workflows directory contains an invalid workflow file?
+
+GitHub Actions generates a failed workflow run for every new commit
+
+```text
+Ensure that you only commit valid workflow files to your repository. If .github/workflows 
+contains an invalid workflow file, GitHub Actions generates a failed workflow run for every new commit.
+```
+
+[Using workflow run logs](https://docs.github.com/en/actions/how-tos/monitor-workflows/use-workflow-run-logs)
+
+5. Sam would like to trigger a workflow when a push is made to any branch in the repository, or somebody creates a tag. How can Sam specify these events within the GitHub workflow configuration?
+
+A on: [push, create]
+
+``text
+Create event: Runs your workflow when someone creates a Git reference (Git branch or tag) in the workflow's repository
+```
+
+[Using activity types and filters with multiple events](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow#using-multiple-events)

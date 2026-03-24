@@ -37,7 +37,17 @@ export GITHUB_OWNER=<owner-here>
 gh workflow run <workflow-name>.yml -f <param1-name>=<param1-value> -f <param1-name>=<param1-value> --ref <repo>
 
 #Allows you to watch the output directly in your terminal.
-gh run view --log
+gh run view RUN_ID --log
+
+# You can also use the --job flag to specify a job ID. Replace job-id with the ID of the job that you want 
+# to view logs for.
+gh run view --job JOB_ID --log
+
+# chaining
+gh run view --job JOB_ID --log | grep error
+
+# To filter the logs for any failed steps, use --log-failed instead of --log.
+gh run view --job JOB_ID --log-failed
 
 # See all the runs with more info (and the Id)
 gh run list
