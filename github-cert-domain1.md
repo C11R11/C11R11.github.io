@@ -646,3 +646,19 @@ workflow jobs in GitHub Actions where proper indentation is crucial for defining
 A: default environment variables are set by GitHub are are available at every step in a workflow
 
 > The env context only contains variables you defined in the YAML.
+
+19. How to trigger a workflow when a new label is added to a PR
+
+```text
+If you want a workflow to fire when someone adds a label (like bug or ready-to-deploy) to a Pull Request.
+
+The Default Behavior: By default, on: pull_request only triggers on opened, reopened, and synchronize 
+(new commits). It does not trigger on labels unless you explicitly add the types key.
+```
+
+```yml
+on:
+  pull_request:
+    types: [labeled]
+```
+[Pull Request event](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)
