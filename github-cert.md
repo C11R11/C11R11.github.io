@@ -1,3 +1,6 @@
+
+![alt text](image-22.png)
+
 # 🎯 Checklist de Preparación: GitHub Actions Certification (GH-200)
 
 * [Github](cli-github.md) - Github
