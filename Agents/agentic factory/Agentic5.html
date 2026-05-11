@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .factory-floor {
+            display: grid;
+            grid-template-columns: repeat(4, 180px);
+            gap: 40px;
+            padding: 60px;
+            background: #020617;
+            font-family: 'JetBrains Mono', monospace;
+            position: relative;
+        }
+        
+        /* The 100x100 Slice Box */
+        .slice-node {
+            width: 100px;
+            height: 100px;
+            background: #0f172a;
+            border: 2px solid #1e293b;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* Dependency Connection Line */
+        .connector {
+            position: absolute;
+            background: #334155;
+            height: 2px;
+            z-index: 1;
+        }
+
+        .status-label {
+            position: absolute;
+            top: -25px;
+            font-size: 9px;
+            color: #475569;
+            width: 100%;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* Node States */
+        .warehoused { border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+        .in-production { border-color: #22d3ee; box-shadow: 0 0 15px rgba(34, 211, 238, 0.3); animation: pulse 2s infinite; }
+        .approved { border-color: #3b82f6; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 flex items-center justify-center min-h-screen">
+
+    <div class="factory-floor">
+        
+        <!-- Column 1: Planned -->
+        <div class="flex flex-col gap-16">
+            <div class="status-label">PLANNING</div>
+            <div class="slice-node opacity-40">
+                <span class="text-[10px] text-slate-500">SCH-005</span>
+                <span class="text-xs">LOGS</span>
+            </div>
+        </div>
+
+        <!-- Column 2: Approved -->
+        <div class="flex flex-col gap-16">
+            <div class="status-label">APPROVED</div>
+            <div class="slice-node approved">
+                <span class="text-[10px] text-blue-400">SCH-004</span>
+                <span class="text-xs">FINOPS</span>
+                <!-- Line to Production -->
+                <div class="connector w-[80px] left-[100px] top-[50px]"></div>
+            </div>
+        </div>
+
+        <!-- Column 3: Production -->
+        <div class="flex flex-col gap-16">
+            <div class="status-label">PRODUCTION</div>
+            <div class="slice-node in-production">
+                <span class="text-[10px] text-cyan-400">SCH-003</span>
+                <span class="text-xs">UI_MVP</span>
+                <!-- Line to Warehouse -->
+                <div class="connector w-[80px] left-[100px] top-[50px]"></div>
+            </div>
+        </div>
+
+        <!-- Column 4: Warehoused -->
+        <div class="flex flex-col gap-16">
+            <div class="status-label">WAREHOUSE</div>
+            <div class="slice-node warehoused">
+                <span class="text-[10px] text-green-500">SCH-002</span>
+                <span class="text-xs">META</span>
+            </div>
+            <div class="slice-node warehoused">
+                <span class="text-[10px] text-green-500">SCH-001</span>
+                <span class="text-xs">CORE</span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

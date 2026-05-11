@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 150px); /* Columns: Planned, Approved, In-Progress, Warehoused */
+            gap: 40px;
+            padding: 40px;
+            background: #020617;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .column-header {
+            color: #94a3b8;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .slice-box {
+            width: 100px;
+            height: 100px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+
+        /* Dependency Lines (The Conveyor Belt) */
+        .slice-box::after {
+            content: '';
+            position: absolute;
+            right: -40px;
+            top: 50%;
+            width: 40px;
+            height: 2px;
+            background: #334155;
+            z-index: 0;
+        }
+
+        /* Remove line from the last column (Warehoused) */
+        .col-4 .slice-box::after { display: none; }
+
+        .slice-box:hover {
+            border-color: #22d3ee;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+            cursor: pointer;
+        }
+
+        .slice-id { font-size: 10px; color: #64748b; }
+        .slice-icon { font-size: 20px; margin: 5px 0; }
+        
+        /* Status Glows */
+        .status-warehoused { border-color: #22c55e; color: #22c55e; }
+        .status-progress { border-color: #eab308; color: #eab308; box-shadow: inset 0 0 5px #eab308; }
+        .status-approved { border-color: #3b82f6; color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-slate-950">
+
+    <div class="grid-container">
+        <!-- COLUMN 1: PLANNED -->
+        <div class="col-1">
+            <h3 class="column-header">Planned</h3>
+            <div class="space-y-10">
+                <div class="slice-box">
+                    <span class="slice-id">SCH-005</span>
+                    <span class="slice-icon">📝</span>
+                </div>
+                <div class="slice-box">
+                    <span class="slice-id">SCH-006</span>
+                    <span class="slice-icon">📝</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 2: APPROVED (Human Gate) -->
+        <div class="col-2">
+            <h3 class="column-header">Approved</h3>
+            <div class="space-y-10">
+                <div class="slice-box status-approved">
+                    <span class="slice-id">SCH-004</span>
+                    <span class="slice-icon">✅</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 3: IN PRODUCTION (Agent Action) -->
+        <div class="col-3">
+            <h3 class="column-header">Production</h3>
+            <div class="space-y-10">
+                <div class="slice-box status-progress">
+                    <span class="slice-id">SCH-003</span>
+                    <span class="slice-icon">⚙️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 4: WAREHOUSED -->
+        <div class="col-4">
+            <h3 class="column-header">Warehoused</h3>
+            <div class="space-y-10">
+                <div class="slice-box status-warehoused">
+                    <span class="slice-id">SCH-001</span>
+                    <span class="slice-icon">📦</span>
+                </div>
+                <div class="slice-box status-warehoused">
+                    <span class="slice-id">SCH-002</span>
+                    <span class="slice-icon">📦</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

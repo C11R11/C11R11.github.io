@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        :root {
+            --bg: #020617;
+            --cyan: #22d3ee;
+            --slate: #1e293b;
+            --line: #334155;
+        }
+
+        .dependency-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 40px;
+            background: var(--bg);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* The Slice Box */
+        .slice-node {
+            position: relative;
+            width: 280px;
+            background: var(--slate);
+            border: 1px solid var(--line);
+            padding: 15px;
+            border-radius: 4px;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .slice-node:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+        }
+
+        /* The Dependency Line */
+        .slice-node:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: var(--line);
+            z-index: 1;
+        }
+
+        /* Status Indicators */
+        .status-tag {
+            font-size: 9px;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 2px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .ready { background: #064e3b; color: #34d399; }
+        .blocked { background: #450a0a; color: #f87171; }
+        .active { background: #164e63; color: #22d3ee; border: 1px solid var(--cyan); }
+
+        .slice-id { color: #64748b; font-size: 10px; margin-bottom: 4px; }
+        .slice-title { color: #f1f5f9; font-size: 13px; font-weight: bold; }
+        
+        /* Dependency Label */
+        .dep-label {
+            position: absolute;
+            bottom: -25px;
+            left: 55%;
+            font-size: 9px;
+            color: #475569;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dependency-flow">
+
+    <!-- Step 1: Core Logic -->
+    <div class="slice-node">
+        <div class="slice-id">SCH-001</div>
+        <span class="status-tag ready">Warehoused</span>
+        <div class="slice-title">Git SHA Extraction Logic</div>
+        <div class="dep-label">REQUIRED BY SCH-002</div>
+    </div>
+
+    <!-- Step 2: Metadata Integration -->
+    <div class="slice-node">
+        <div class="slice-id">SCH-002</div>
+        <span class="status-tag active">In Production</span>
+        <div class="slice-title">Slice Metadata Linker</div>
+        <div class="dep-label">REQUIRED BY SCH-003</div>
+    </div>
+
+    <!-- Step 3: Frontend Sync (Blocked until SCH-002 is merged) -->
+    <div class="slice-node" style="opacity: 0.6;">
+        <div class="slice-id">SCH-003</div>
+        <span class="status-tag blocked">Locked</span>
+        <div class="slice-title">Dashboard Telemetry UI</div>
+        <!-- No line after the final node -->
+    </div>
+
+</div>
+
+</body>
+</html>

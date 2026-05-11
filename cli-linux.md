@@ -88,6 +88,13 @@ find . -type f -name "<file.ext>"
 find . -type f -name "<*.ext>"
 ```
 
+## Filter
+
+```sh
+# List and filter without extension
+ls -1 | sed -e 's/\.mp3$//
+```
+
 ### look into files
 ```sh
 

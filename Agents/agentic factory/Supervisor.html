@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Factory | Supervisor Console</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.css">
+    <style>
+        .conveyor-belt {
+            background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0f172a 10px, #0f172a 20px);
+            height: 8px;
+            width: 100%;
+        }
+        .glow-green { box-shadow: 0 0 15px rgba(34, 197, 94, 0.3); }
+        .glow-amber { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 font-mono text-sm">
+
+    <!-- TOP NAV: FINOPS MONITOR -->
+    <nav class="border-b border-slate-800 p-4 bg-slate-900/50 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <span class="text-green-500 font-bold tracking-widest text-lg">AGENTIC_FACTORY_v1.0</span>
+            <div class="h-4 w-px bg-slate-700"></div>
+            <div class="flex gap-6">
+                <div><span class="text-slate-500 uppercase text-xs">Runway</span> <span class="text-blue-400">$642.50</span></div>
+                <div><span class="text-slate-500 uppercase text-xs">Daily Burn</span> <span class="text-amber-400">0.82%</span></div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="px-2 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded text-[10px]">SYSTEMS: NOMINAL</span>
+            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded font-bold uppercase text-xs transition-all">Emergency Stop</button>
+        </div>
+    </nav>
+
+    <main class="p-6 space-y-8">
+        
+        <!-- SECTION 1: THE CONVEYOR (LOGISTICS FLOW) -->
+        <section>
+            <h2 class="text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-factory"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></svg>
+                Production Line (JIT)
+            </h2>
+            
+            <div class="grid grid-cols-4 gap-4 relative">
+                <!-- CONVEYOR DECORATION -->
+                <div class="absolute top-[85px] left-0 right-0 conveyor-belt opacity-20"></div>
+
+                <!-- PHASE 1: REASONING -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-xs font-bold text-blue-400 uppercase">1. Planning</span>
+                        <span class="text-[10px] text-slate-500">GEMINI_1.5_FREE</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="bg-slate-800/50 p-2 border-l-2 border-blue-500 rounded text-xs opacity-50">
+                            SCH-001: Spec Parser
+                            <div class="text-[10px] text-slate-500 mt-1 italic">Status: Sliced</div>
+                        </div>
+                        <div class="bg-slate-800 p-2 border-l-2 border-blue-400 rounded text-xs animate-pulse">
+                            SCH-002: Git Integrator
+                            <div class="text-[10px] text-blue-400 mt-1 italic">Status: Reasoning...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHASE 2: IMPLEMENTATION -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-xs font-bold text-amber-400 uppercase">2. Production</span>
+                        <span class="text-[10px] text-slate-500">CLAUDE_3.5_SONNET</span>
+                    </div>
+                    <div class="bg-amber-900/10 border-2 border-amber-500/50 p-3 rounded text-xs glow-amber">
+                        <div class="flex justify-between font-bold mb-1">
+                            <span>MP3-004: Spotify Auth</span>
+                            <span class="text-amber-500">64%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1 mb-2">
+                            <div class="bg-amber-500 h-1 w-[64%]"></div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 truncate font-mono">Writing: spotify_sync.py</div>
+                    </div>
+                </div>
+
+                <!-- PHASE 3: QUALITY CONTROL -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-xs font-bold text-green-400 uppercase">3. Validation</span>
+                        <span class="text-[10px] text-slate-500">PYTEST + GH_ACTIONS</span>
+                    </div>
+                    <div class="bg-green-900/10 border border-green-500/30 p-2 rounded text-xs glow-green mb-2">
+                        MP3-003: metadata_tagger
+                        <div class="flex gap-2 mt-1">
+                            <span class="text-[10px] text-green-500">PASS: Unit Tests</span>
+                            <span class="text-[10px] text-green-500">PASS: Lint</span>
+                        </div>
+                    </div>
+                    <button class="w-full py-2 bg-green-600 hover:bg-green-500 text-white text-[10px] uppercase font-bold rounded transition-colors">Sign-off & Warehousing</button>
+                </div>
+
+                <!-- PHASE 4: WAREHOUSE (GIT) -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded relative z-10">
+                    <div class="flex justify-between items-start mb-4 text-slate-500 uppercase font-bold">
+                        <span>4. Inventory</span>
+                        <span class="text-[10px]">MAIN BRANCH</span>
+                    </div>
+                    <div class="space-y-1 opacity-60 overflow-hidden h-24">
+                        <div class="text-[10px] font-mono"><span class="text-slate-500">8f2a1c:</span> MP3-001_core_dl</div>
+                        <div class="text-[10px] font-mono"><span class="text-slate-500">4c5d9e:</span> MP3-002_ffmpeg_hook</div>
+                        <div class="text-[10px] font-mono"><span class="text-slate-500">1a2b3c:</span> SCH-000_init_repo</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: METRICS (TOKENOMICS) -->
+        <div class="grid grid-cols-3 gap-6">
+            <!-- TOKEN BURN -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded">
+                <h3 class="text-slate-500 text-[10px] uppercase mb-4">Raw Material Consumption (Tokens)</h3>
+                <div class="flex items-end gap-2 mb-2">
+                    <span class="text-3xl font-bold">128.4k</span>
+                    <span class="text-xs text-slate-500 pb-1">Tokens/Hr</span>
+                </div>
+                <div class="space-y-3 mt-4">
+                    <div class="flex justify-between text-[10px]">
+                        <span>Input (Reasoning)</span>
+                        <span class="text-blue-400">82,400 (64%)</span>
+                    </div>
+                    <div class="flex justify-between text-[10px]">
+                        <span>Output (Generation)</span>
+                        <span class="text-amber-400">46,000 (36%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGISTICS METRICS -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded">
+                <h3 class="text-slate-500 text-[10px] uppercase mb-4">Logistics Performance</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-[10px] text-slate-500">LEAD TIME</div>
+                        <div class="text-lg font-bold">14m 20s</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-500">CYCLE TIME</div>
+                        <div class="text-lg font-bold">03m 45s</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-500">DEFECT RATE</div>
+                        <div class="text-lg font-bold text-red-400">12.5%</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-500">WIP SLICES</div>
+                        <div class="text-lg font-bold">3 / 5</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORECASTING -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded">
+                <h3 class="text-slate-500 text-[10px] uppercase mb-4">Production Forecast</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs">Est. Completion</span>
+                        <span class="text-xs font-bold">Fri 14:00 (Pre-Gig)</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs">Proj. Cost to Finish</span>
+                        <span class="text-xs font-bold text-amber-400">$12.44</span>
+                    </div>
+                    <div class="h-px bg-slate-800"></div>
+                    <p class="text-[10px] text-slate-500 italic text-center">"The machines only stop when the plan is full."</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>
