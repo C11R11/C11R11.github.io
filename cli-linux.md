@@ -14,6 +14,7 @@ ctrl + l # or command + l
 ```sh
 # --- System Info ---
 uname -a                 # Display kernel version and system info
+id                       # Display all users ids
 uptime                   # See how long the system has been running
 who                      # Show who is logged in
 hostname                 # Show or set hostname
