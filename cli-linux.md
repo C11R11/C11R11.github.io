@@ -74,60 +74,6 @@ netstat                        # Displays network statistics
 netstat -tuln 
 ```
 
-## Files
-
-### Search for files
-```sh
-
-### Look for all the files within a certain folder
-# alt 1: with ls (shows only name)
-ls -R | grep "<file.ext>"
-# alt 2: with find (shows files with path)
-find . -type f -name "<file.ext>"
-
-### look for all the files with a certain extension
-find . -type f -name "<*.ext>"
-```
-
-## Filter
-
-```sh
-# List and filter without extension
-ls -1 | sed -e 's/\.mp3$//
-```
-
-### look into files
-```sh
-
-# Find files and show only the errors 
-# -> find will lookup for files
-# -> -> then xargs will use that output to read the files with command cat
-# -> -> -> again the results get filtered with grep
-# -> -> -> -> gets sorted in the 4th colum (assuming it's a text with an space as delimeter)
-# -> -> -> -> -> and filter only uniques values from column 3 and after with uniq 
-# -> -> -> -> -> -> and redirect to save the output as a log file
-find . -type f -name "<file.ext>" | xargs cat | grep "Error" | sort -k4 | uniq -f3 > errors.log
-
-# Compare two files and show them
-diff -y file1.txt file2.txt
-
-# Compare at byte level
-cmp file1.bin file2.bin
-```
-
-### Backup files
-
-> starting from the find command to see which files we need to backup
-
-```sh
-# -> find will lookup for files
-# -> (the exec flag will tell to execute someting with each find result)
-# -> -> rsync will synchronize the the files from find to a destination path
-find . -type f -name "<file.ext>" -exec rsync -R <destination_path> \;
-```
-
-## How's and where's
-
 ### ssh
 
 ```sh
