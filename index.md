@@ -3,3 +3,4 @@
 * [🔧 cli ](cli-index.md) - Cli notes 
 * [ Roadmap to Platform engineer](devops-career.md) - Devops career
 * [Spec-driven development](./ssd/index.md)
+* [Backend mid full roadmap](backend-mid-career.md) - Backend career

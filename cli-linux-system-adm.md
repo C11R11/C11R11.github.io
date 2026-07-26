@@ -103,6 +103,10 @@ sudo mount /dev/sdb1 /media/usb-drive
 
 # Verify it successfully mounted by checking available space
 df -h | grep /media/usb-drive
+
+# mount ntfs
+sudo mount -t ntfs-3g -o uid=1000,gid=1000,rw /dev/sda2 /media/cristian/usb_fix/
+
 ```
 
 ## Persist the volume mount
@@ -125,10 +129,28 @@ sudo mount -a
 # 4. Confirm it mounted and shows up as fuseblk/ntfs-3g (df is for diskfree)
 df -T /media/usb-media
 
-```
-
-
 /dev/sda2: LABEL="SWITCH" BLOCK_SIZE="512" UUID="EA24613124610245" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="b8e5a15d-0cb1-4d20-a8b2-124c13f1e184"
 
 
 UUID=EA24613124610245 /media/usb-media ext4 defaults,nofail 0 2
+
+```
+## Maintain system volumes
+
+```bash
+# This will watch the disk free space 
+watch -n 1 df -h
+
+# This will list the most large files 
+du -h -d 1 | sort -hr | head -n 20
+
+# Finding for some file name
+du -h -d 1 | sort -hr | grep "xyz"
+
+# Full folder structure
+tree
+
+#This is to copy files and see progress (mv command doesn't have a progress option, only verbose)
+rsync -a --info=progress2 --remove-source-files source_file.mp4 /path/to/destination/
+rsync -av --info=progress2 --remove-source-files /path/to/source/ /path/to/destination/
+```

@@ -21,9 +21,10 @@ hostname                 # Show or set hostname
 free                     # Display memory usage
 
 # --- Disk Usage ---
-df -h                    # Show free disk space in human-readable format
-du -sh *                 # Show size of files/folders in current directory
-free -h                  # Show memory usage
+df -h                           # Show free disk space in human-readable format
+du -sh *                        # Show size of files/folders in current directory
+free -h                         # Show memory usage
+du -h -d 1 | sort -hr  # Show lsit of directories sorted by size
 
 # --- Network ---
 ip addr                  # Show all network interfaces and IP addresses
@@ -46,6 +47,16 @@ chown user:group <file>  # Change owner and group of a file
 # --- Logs & Troubleshooting ---
 journalctl -xe           # View system logs for troubleshooting
 tail -f /var/log/syslog  # Watch logs in real-time
+```
+
+## Alias
+
+```sh
+
+nano ~/.bashrc
+alias alias_name="cmd"
+source ~/.bashrc
+
 ```
 
 ## Special for chained commands
