@@ -9,6 +9,43 @@ find . -type f -name "<file.ext>"
 
 ### look for all the files with a certain extension
 find . -type f -name "<*.ext>"
+
+tree                  # List current directory contents in a tree structure
+tree /path/to/dir     # List a specific directory path
+tree -a               # Show all files, including hidden files (starting with .)
+tree -d               # List directories only (no files)
+tree -f               # Print the full path prefix for each file
+
+# --- LEVEL CONTROL ---
+tree -L 2             # Limit the display to a maximum depth of 2 levels
+tree -L 3 -d          # Limit depth to 3 levels, directories only
+
+# --- FILE FILTERING ---
+tree -P "*.txt"       # Only list files that match the pattern (*.txt)
+tree -I "node_modules|temp" # Exclude files/directories matching a pattern
+tree --prune          # Remove empty directories from the output
+
+# --- FILE DETAILS & PERMISSIONS ---
+tree -p               # Print file type and permissions (like ls -l)
+tree -u               # Display the file owner or UID number
+tree -g               # Display the group name or GID number
+tree -s               # Print the size of each file in bytes
+tree -h               # Print file sizes in a human-readable format (e.g., 4K, 2M)
+tree --si             # Like -h, but use powers of 1000 instead of 1024
+
+# --- SORTING OPTIONS ---
+tree -r               # Sort the output in reverse order (Z to A)
+tree -t               # Sort output by last modification time (newest first)
+tree -c               # Sort output by last status change time (ctime)
+tree -U               # Do not sort (leave unsorted in directory order)
+
+# --- GRAPHICS & OUTPUT ---
+tree -C               # Turn on colorization of files/folders
+tree -A               # Use ASCII line graphics (instead of UTF-8)
+tree -X               # Print output in XML format
+tree -J               # Print output in JSON format
+tree -o output.txt    # Write the output directly into a text file
+
 ```
 
 ## Filter
